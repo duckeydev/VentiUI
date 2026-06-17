@@ -1,6 +1,10 @@
 "use client";
 
 import * as React from "react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 export type ChatBubbleVariant = "modern" | "minimal" | "glass" | "macos";
 
@@ -11,17 +15,16 @@ export type ChatMessage = {
   time?: string;
   side?: "left" | "right";
   avatar?: React.ReactNode;
-  variant?: ChatBubbleVariant; // New property per message
+  variant?: ChatBubbleVariant;
 };
 
 interface ChatBubblesProps {
   messages: ChatMessage[];
   className?: string;
   showTimestamps?: boolean;
-  defaultVariant?: ChatBubbleVariant; // Global fallback variant
+  defaultVariant?: ChatBubbleVariant;
 }
 
-// Helper hook or function to resolve tailwind classes per variant
 const getVariantClasses = (variant: ChatBubbleVariant, isRight: boolean) => {
   const styles: Record<ChatBubbleVariant, { left: string; right: string }> = {
     modern: {
@@ -54,35 +57,36 @@ export const ChatBubble = React.forwardRef<
   const bubbleStyles = getVariantClasses(activeVariant, isRight);
 
   return (
-    <div 
-      ref={ref} 
-      className={`flex w-full items-end gap-2.5 ${isRight ? "justify-end" : "justify-start"}`}
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, x: isRight ? 20 : -20, y: 8 }}
+      animate={{ opacity: 1, x: 0, y: 0 }}
+      transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
+      className={cn("flex w-full items-end gap-2.5", isRight ? "justify-end" : "justify-start")}
     >
-      {/* Left Avatar */}
       {!isRight && (
         <div className="flex h-8 w-8 shrink-0 items-center justify-center select-none">
           {message.avatar || <div className="h-full w-full rounded-full bg-muted/60" />}
         </div>
       )}
 
-      {/* Message Core Container */}
-      <div className={`flex max-w-[72%] flex-col gap-1 ${isRight ? "items-end" : "items-start"}`}>
-        {/* Author Name */}
+      <div className={cn("flex max-w-[72%] flex-col gap-1", isRight ? "items-end" : "items-start")}>
         {!isRight && message.author && (
           <span className="px-1 text-xs font-medium text-muted-foreground/70">
             {message.author}
           </span>
         )}
 
-        {/* Bubble */}
         <div
           aria-live="polite"
-          className={`break-words px-4 py-2.5 text-[14px] leading-relaxed transition-all duration-200 ${bubbleStyles}`}
+          className={cn(
+            "break-words px-4 py-2.5 text-[14px] leading-relaxed transition-all duration-200",
+            bubbleStyles
+          )}
         >
           {message.text}
         </div>
 
-        {/* Timestamp */}
         {showTimestamp && message.time && (
           <time className="px-1 text-[10px] font-medium tracking-wide text-muted-foreground/50 uppercase">
             {message.time}
@@ -90,35 +94,44 @@ export const ChatBubble = React.forwardRef<
         )}
       </div>
 
-      {/* Right Avatar */}
       {isRight && (
         <div className="flex h-8 w-8 shrink-0 items-center justify-center select-none">
           {message.avatar || <div className="h-full w-full rounded-full bg-muted/60" />}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 });
 
 ChatBubble.displayName = "ChatBubble";
 
-export const ChatBubbles: React.FC<ChatBubblesProps> = ({ 
-  messages, 
-  className = "", 
+export const ChatBubbles: React.FC<ChatBubblesProps> = ({
+  messages,
+  className = "",
   showTimestamps = false,
   defaultVariant = "modern"
 }) => {
   return (
-    <div className={`flex flex-col gap-4 p-4 w-full max-w-2xl mx-auto ${className}`}>
+    <motion.div
+      className={cn("flex flex-col gap-4 p-4 w-full max-w-2xl mx-auto", className)}
+      initial="hidden"
+      animate="visible"
+      variants={{
+        hidden: {},
+        visible: {
+          transition: { staggerChildren: 0.06 },
+        },
+      }}
+    >
       {messages.map((m) => (
-        <ChatBubble 
-          key={m.id} 
-          message={m} 
-          showTimestamp={showTimestamps} 
-          fallbackVariant={defaultVariant} 
+        <ChatBubble
+          key={m.id}
+          message={m}
+          showTimestamp={showTimestamps}
+          fallbackVariant={defaultVariant}
         />
       ))}
-    </div>
+    </motion.div>
   );
 };
 

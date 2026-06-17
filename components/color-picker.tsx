@@ -1,6 +1,11 @@
+'use client';
+
 import * as React from "react";
 import { IconColorPicker } from "@tabler/icons-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 export interface ColorPickerProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "onChange" | "defaultValue"> {
   label?: string;
@@ -43,23 +48,33 @@ export const ColorPicker = React.forwardRef<HTMLInputElement, ColorPickerProps>(
               value={currentValue}
               onChange={handleChange}
               disabled={disabled}
-              className="absolute -top-2 -left-2 h-16 w-16 cursor-pointer p-0 disabled:cursor-not-allowed"
+              className="absolute -top-2 -left-2 h-16 w-16 cursor-pointer p-0 disabled:cursor-not-allowed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               aria-invalid={error ? "true" : undefined}
               aria-describedby={errorId}
               {...props}
             />
           </div>
-          <div className="flex flex-1 items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 shadow-sm">
+          <div className="flex flex-1 items-center gap-2 rounded-lg border border-border bg-background px-3 py-2 shadow-sm transition-colors focus-within:ring-2 focus-within:ring-primary/40">
             <IconColorPicker className="h-4 w-4 text-muted-foreground" />
             <span className="font-mono text-sm font-medium uppercase text-foreground">{currentValue}</span>
           </div>
         </div>
 
-        {error && (
-          <p id={errorId} className="text-xs font-medium text-destructive" role="alert">
-            {error}
-          </p>
-        )}
+        <AnimatePresence>
+          {error && (
+            <motion.p
+              id={errorId}
+              role="alert"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 4 }}
+              transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
+              className="text-xs font-medium text-destructive"
+            >
+              {error}
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
     );
   }

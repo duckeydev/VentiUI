@@ -5,7 +5,10 @@ import { usePathname } from "next/navigation";
 import { IconArrowLeft, IconArrowRight } from "@tabler/icons-react";
 import { SIDEBAR_MAP, type SidebarItem } from "./navigationMap";
 
-function findAdjacent(pathname: string): { prev?: SidebarItem; next?: SidebarItem } {
+function findAdjacent(pathname: string): {
+  prev?: SidebarItem;
+  next?: SidebarItem;
+} {
   for (const items of Object.values(SIDEBAR_MAP)) {
     const idx = items.findIndex((it) => it.href === pathname);
     if (idx !== -1) {
@@ -33,9 +36,12 @@ export default function DocsAdjacentNav() {
           className="group flex flex-col items-start gap-1 rounded-xl border border-border/70 bg-card/30 p-4 text-left transition-all hover:bg-secondary/40"
         >
           <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
-            <IconArrowLeft className="h-3 w-3 transition-transform group-hover:-translate-x-0.5" /> Previous
+            <IconArrowLeft className="h-3 w-3 transition-transform group-hover:-translate-x-0.5" />{" "}
+            Previous
           </span>
-          <span className="font-semibold text-foreground">{prev.item} Component</span>
+          <span className="font-semibold text-foreground">
+            {prev.item} Component
+          </span>
         </Link>
       ) : (
         <div />
@@ -47,9 +53,12 @@ export default function DocsAdjacentNav() {
           className="group flex flex-col items-end gap-1 rounded-xl border border-border/70 bg-card/30 p-4 text-right transition-all hover:bg-secondary/40"
         >
           <span className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
-            Next <IconArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
+            Next{" "}
+            <IconArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-0.5" />
           </span>
-          <span className="font-semibold text-foreground">{next.item} Component</span>
+          <span className="font-semibold text-foreground">
+            {next.item} Component
+          </span>
         </Link>
       ) : (
         <div />

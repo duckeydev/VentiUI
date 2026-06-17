@@ -1,7 +1,11 @@
 "use client";
 
 import * as React from "react";
+import { motion } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 export const splitterVariants = cva("flex w-full h-full overflow-hidden select-none", {
   variants: {
@@ -9,24 +13,26 @@ export const splitterVariants = cva("flex w-full h-full overflow-hidden select-n
       horizontal: "flex-row",
       vertical: "flex-col",
     },
+    variant: {
+      modern: "",
+      minimal: "",
+      glass: "backdrop-blur-md bg-white/5 dark:bg-black/10",
+      macos: "bg-card/50 backdrop-blur-sm",
+    },
   },
   defaultVariants: {
     direction: "horizontal",
+    variant: "modern",
   },
 });
 
 export interface LayoutSplitterProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof splitterVariants> {
-  /** Initial split percentage allocation targeting the left/top pane node item (e.g. 30). */
   initialSize?: number;
-  /** Constrains the size scaling array minimum boundary limit down to a floor value percentage. */
   minSize?: number;
-  /** Constrains the size scaling array maximum boundary limit up to a ceiling value percentage. */
   maxSize?: number;
-  /** Left or upper panel view content node track. */
   primaryPane: React.ReactNode;
-  /** Right or lower panel view content node track. */
   secondaryPane: React.ReactNode;
 }
 
@@ -40,6 +46,7 @@ export const LayoutSplitter = React.forwardRef<HTMLDivElement, LayoutSplitterPro
       primaryPane,
       secondaryPane,
       className,
+      variant = "modern",
       ...props
     },
     ref
@@ -83,7 +90,6 @@ export const LayoutSplitter = React.forwardRef<HTMLDivElement, LayoutSplitterPro
       [isHorizontal, minSize, maxSize]
     );
 
-    // Watch global interaction events across document layouts during dragging sequence
     React.useEffect(() => {
       const handleMouseMove = (e: MouseEvent) => {
         if (!isDragging) return;
@@ -118,33 +124,61 @@ export const LayoutSplitter = React.forwardRef<HTMLDivElement, LayoutSplitterPro
           if (typeof ref === "function") ref(node);
           else if (ref) ref.current = node;
         }}
-        className={splitterVariants({ direction, className })}
+        className={cn(splitterVariants({ direction, variant, className }))}
         {...props}
       >
-        {/* Primary Input Tracking Window */}
-        <div 
+        <div
           style={{ [isHorizontal ? "width" : "height"]: `${size}%` }}
           className="overflow-auto pointer-events-auto shrink-0 select-text"
+          role="region"
+          aria-label="Primary pane"
         >
           {primaryPane}
         </div>
 
-        {/* Resizable Intercept Divider Gutter Track */}
-        <div
+        <motion.div
           onMouseDown={startResize}
           onTouchStart={startResize}
-          className={`flex shrink-0 items-center justify-center bg-border/40 hover:bg-primary/40 dark:hover:bg-primary/60 transition-colors z-20 select-none ${
-            isHorizontal 
-              ? "w-1.5 h-full cursor-col-resize horizontal-divider" 
-              : "h-1.5 w-full cursor-row-resize vertical-divider"
-          } ${isDragging ? "bg-primary text-primary" : ""}`}
+          whileHover={isHorizontal ? { scaleX: 1.5 } : { scaleY: 1.5 }}
+          transition={{ duration: 0.15, ease: EASE_OUT_EXPO }}
+          className={cn(
+            "flex shrink-0 items-center justify-center bg-border/40 hover:bg-primary/40 dark:hover:bg-primary/60 transition-colors z-20 select-none",
+            isHorizontal
+              ? "w-1.5 h-full cursor-col-resize"
+              : "h-1.5 w-full cursor-row-resize",
+            isDragging && "bg-primary text-primary"
+          )}
+          role="separator"
+          aria-orientation={direction === "vertical" ? "vertical" : "horizontal"}
+          aria-valuenow={Math.round(size)}
+          aria-valuemin={minSize}
+          aria-valuemax={maxSize}
+          tabIndex={0}
+          onKeyDown={(e) => {
+            const step = 1;
+            if (isHorizontal) {
+              if (e.key === "ArrowLeft") setSize((s) => Math.max(minSize, s - step));
+              if (e.key === "ArrowRight") setSize((s) => Math.min(maxSize, s + step));
+            } else {
+              if (e.key === "ArrowUp") setSize((s) => Math.max(minSize, s - step));
+              if (e.key === "ArrowDown") setSize((s) => Math.min(maxSize, s + step));
+            }
+          }}
         >
-          {/* Subtle visual utility node indicators */}
-          <div className={`${isHorizontal ? "w-[2px] h-4" : "h-[2px] w-4"} bg-muted-foreground/30 rounded-full`} />
-        </div>
+          <div
+            className={cn(
+              isHorizontal ? "w-[2px] h-4" : "h-[2px] w-4",
+              "bg-muted-foreground/30 rounded-full"
+            )}
+            aria-hidden="true"
+          />
+        </motion.div>
 
-        {/* Secondary Output Tracking Window */}
-        <div className="flex-1 overflow-auto pointer-events-auto select-text">
+        <div
+          className="flex-1 overflow-auto pointer-events-auto select-text"
+          role="region"
+          aria-label="Secondary pane"
+        >
           {secondaryPane}
         </div>
       </div>

@@ -1,14 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import React from "react";
 import {
-  IconCode,
-  IconEye,
-  IconExternalLink,
   IconClick,
-  IconSparkles,
-  IconCheck,
-  IconCopy,
   IconUser,
   IconSettings,
   IconShare,
@@ -19,19 +13,17 @@ import { Dropdown, type DropdownItem } from "@/components/dropdown";
 import { DocsBreadcrumbs, DocsOutline, DocsPageFrame, DocsPanel } from "../../../layout";
 import DocsSidebar from "../../../Sidebar";
 import DocsAdjacentNav from "../../../DocsAdjacentNav";
+import CodeBlock from "@/app/components/codeblock";
+import { Badge } from "@/components";
 
 const componentMeta = {
   title: "Dropdown Menu Node",
-  description: "A contextual overlay container utility displaying interactive trigger option indexes with integrated keyboard navigational mapping hooks.",
+  description: "A menu that opens when you click a button to select an option.",
   version: "v1.0.0",
   sourceUrl: "https://github.com/venti-ui/venti/blob/main/packages/dropdown.tsx",
 };
 
 export default function DropdownDocsPage() {
-  const [selectedLog, setSelectedLog] = useState<string>("None");
-  const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"preview" | "code">("preview");
-
   const actionItems: DropdownItem[] = [
     { id: "profile", label: "View Profile", icon: <IconUser className="w-3.5 h-3.5" /> },
     { id: "settings", label: "Account Settings", icon: <IconSettings className="w-3.5 h-3.5" /> },
@@ -79,7 +71,6 @@ export function ActionMenu() {
       }
     >
       <main className="py-10 lg:col-span-7 space-y-12 lg:max-w-3xl">
-        {/* Core Header Section Workspace */}
         <div className="space-y-3 border-b border-border pb-6">
           <DocsBreadcrumbs
             items={[
@@ -93,104 +84,53 @@ export function ActionMenu() {
             <h1 className="text-3xl font-extrabold tracking-tight text-foreground lg:text-4xl">
               {componentMeta.title}
             </h1>
-            <span className="mt-1.5 rounded bg-secondary border border-border/80 px-2 py-0.5 font-mono text-[11px] font-bold text-muted-foreground">
-              {componentMeta.version}
-            </span>
+<Badge variant="info">
+  {componentMeta.version}
+</Badge>
           </div>
 
           <p className="text-base leading-relaxed text-muted-foreground">{componentMeta.description}</p>
 
-          <div className="flex items-center gap-3 pt-2">
-            <a
-              href={componentMeta.sourceUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 rounded-md border border-border/60 bg-secondary/40 px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <IconCode className="h-3.5 w-3.5" /> View Package Source
-              <IconExternalLink className="h-2.5 w-2.5 text-muted-foreground/60" />
-            </a>
-          </div>
+
         </div>
 
-        {/* Live Active Rendering Interactive Sandbox */}
         <section id="interactive-demo" className="space-y-3 scroll-mt-20">
-          <div className="flex items-center gap-2">
-            <IconClick className="h-4 w-4 text-primary" />
-            <h3 className="text-lg font-bold tracking-tight text-foreground">Interactive Implementation</h3>
-          </div>
-          <p className="max-w-2xl text-xs leading-relaxed text-muted-foreground">
-            Activate the overlay portal canvas below. Navigate index blocks dynamically with your keyboard arrows.
-          </p>
-
-          <DocsPanel className=" rounded-xl bg-card/20">
-            <div className="flex items-center justify-between border-b border-border/50 bg-secondary/30 px-3 py-1.5">
-              <div className="flex items-center gap-1 rounded-lg border border-border/60 bg-background/50 p-0.5 text-xs font-medium">
-                <button
-                  onClick={() => setActiveTab("preview")}
-                  className={`flex items-center gap-1 rounded-md px-2.5 py-1 transition-all ${activeTab === "preview" ? "bg-card font-semibold text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-                >
-                  <IconEye className="h-3.5 w-3.5" /> Preview
-                </button>
-                <button
-                  onClick={() => setActiveTab("code")}
-                  className={`flex items-center gap-1 rounded-md px-2.5 py-1 transition-all ${activeTab === "code" ? "bg-card font-semibold text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-                >
-                  <IconCode className="h-3.5 w-3.5" /> Code
-                </button>
-              </div>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(exampleCode);
-                  setCopiedId("demo");
-                  setTimeout(() => setCopiedId(null), 2000);
-                }}
-                className="cursor-pointer rounded-md border border-border/60 bg-card/60 p-1.5 text-muted-foreground transition-all hover:border-border hover:text-foreground"
-              >
-                {copiedId === "demo" ? (
-                  <IconCheck className="h-3.5 w-3.5 text-emerald-500" />
-                ) : (
-                  <IconCopy className="h-3.5 w-3.5" />
-                )}
-              </button>
-            </div>
-
-            <div className="flex min-h-64 flex-col items-center justify-center bg-card/10 p-6 overflow-visible">
-              {activeTab === "preview" ? (
-                <div className="w-full max-w-xs flex flex-col items-center gap-4">
-                  <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-muted-foreground/60 text-center">
-                    Dashboard Settings Portal
-                  </label>
-                  
-                  <Dropdown
-                    label="Options Matrix"
-                    items={actionItems}
-                    onSelect={(item) => setSelectedLog(item.label)}
-                  />
-
-                  <span className="text-[10px] text-muted-foreground/40 font-mono mt-4">
-                    Callback Registered: "{selectedLog}"
-                  </span>
-                </div>
-              ) : (
-                <pre className="w-full overflow-x-auto rounded-lg border border-border/40 bg-muted/20 p-4 font-mono text-xs leading-relaxed text-muted-foreground">
-                  <code>{exampleCode}</code>
-                </pre>
-              )}
-            </div>
-          </DocsPanel>
+          <CodeBlock
+            example={{
+              id: "interactive-demo",
+              title: "Interactive Implementation",
+              description: "Click the button to open the dropdown and select an option.",
+              code: exampleCode,
+              render: () => {
+                const [selectedLog, setSelectedLog] = React.useState<string>("None");
+                return (
+                  <div className="w-full max-w-xs flex flex-col items-center gap-4">
+                    <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-muted-foreground/60 text-center">
+                      Dashboard Settings Portal
+                    </label>
+                    <Dropdown
+                      label="Options Matrix"
+                      items={actionItems}
+                      onSelect={(item) => setSelectedLog(item.label)}
+                    />
+                    <span className="text-[10px] text-muted-foreground/40 font-mono mt-4">
+                      Callback Registered: "{selectedLog}"
+                    </span>
+                  </div>
+                );
+              },
+            }}
+          />
         </section>
 
-        {/* Configurations Parameters Specifications API Matrices Area */}
         <section id="props-api" className="space-y-4 scroll-mt-20">
           <div className="flex items-center gap-2 border-b border-border/40 pb-2">
-            <div className="rounded-md border border-border/50 bg-secondary/50 p-1.5 text-primary">
-              <IconSparkles stroke={2} className="h-4 w-4" />
-            </div>
             <div className="space-y-0.5">
-              <h2 className="text-lg font-bold tracking-tight text-foreground">Dropdown API Reference</h2>
+              <h2 className="text-lg font-bold tracking-tight text-foreground">
+                Properties API
+              </h2>
               <p className="text-xs text-muted-foreground">
-                Properties parameters and typography structure keys accepted by the dynamic Dropdown overlay.
+                All available props for this component.
               </p>
             </div>
           </div>
@@ -230,7 +170,7 @@ export function ActionMenu() {
         <DocsAdjacentNav />
 
         <footer className="border-t border-border/30 pt-4 text-center text-xs text-muted-foreground/40">
-          © 2026 Venti UI Labs. Overlay navigation context design layers.
+          © 2026 Venti UI Labs. UI made right.
         </footer>
       </main>
     </DocsPageFrame>

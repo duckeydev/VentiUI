@@ -1,7 +1,11 @@
 "use client";
 
 import * as React from "react";
+import { motion } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 export const listVariants = cva(
   "my-3 text-foreground transition-all duration-150 text-sm leading-relaxed",
@@ -28,7 +32,6 @@ export const listVariants = cva(
 export interface ListProps
   extends React.HTMLAttributes<HTMLUListElement | HTMLOListElement>,
     VariantProps<typeof listVariants> {
-  /** Mutates the underlying HTML semantic wrapper node. */
   as?: "ul" | "ol";
 }
 
@@ -52,13 +55,19 @@ export interface ListItemProps extends React.LiHTMLAttributes<HTMLLIElement> {}
 export const ListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
   ({ className, children, ...props }, ref) => {
     return (
-      <li
+      <motion.li
         ref={ref}
-        className={`text-muted-foreground/90 transition-colors duration-150 hover:text-foreground [&_ul]:my-1.5 [&_ol]:my-1.5 ${className || ""}`}
-        {...props}
+        initial={{ opacity: 0, x: -8 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.2, ease: EASE_OUT_EXPO as any }}
+        className={cn(
+          "text-muted-foreground/90 transition-colors duration-150 hover:text-foreground [&_ul]:my-1.5 [&_ol]:my-1.5",
+          className
+        )}
+        {...(props as any)}
       >
         {children}
-      </li>
+      </motion.li>
     );
   }
 );

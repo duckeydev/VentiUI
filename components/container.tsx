@@ -1,28 +1,54 @@
-import React from "react";
+"use client";
 
-// --- Types ---
-export type ContainerSize = "sm" | "md" | "lg" | "xl" | "2xl";
+import * as React from "react";
+import { motion } from "framer-motion";
+import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 
-export interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+
+export const containerVariants = cva(
+  "w-full mx-auto transition-all duration-300",
+  {
+    variants: {
+      size: {
+        sm: "max-w-screen-sm",
+        md: "max-w-screen-md",
+        lg: "max-w-screen-lg",
+        xl: "max-w-screen-xl",
+        "2xl": "max-w-screen-2xl",
+      },
+      gutter: {
+        true: "px-4 sm:px-6 lg:px-8",
+        false: "",
+      },
+      variant: {
+        modern: "",
+        minimal: "",
+        glass: "backdrop-blur-md bg-white/5 dark:bg-black/10",
+        macos: "bg-card/50 backdrop-blur-sm",
+      },
+    },
+    defaultVariants: {
+      size: "lg",
+      gutter: true,
+      variant: "modern",
+    },
+  }
+);
+
+export type ContainerSize = VariantProps<typeof containerVariants>["size"];
+
+export interface ContainerProps
+  extends React.HTMLAttributes<HTMLDivElement>,
+    VariantProps<typeof containerVariants> {
   children: React.ReactNode;
-  /**
-   * Defines the maximum-width bounds of the content viewport wrapper.
-   * @default "lg"
-   */
   size?: ContainerSize;
-  /**
-   * When true, forces the layout canvas to span 100% width infinitely, ignoring size values.
-   * @default false
-   */
   fluid?: boolean;
-  /**
-   * Strips out responsive horizontal side paddings (gutters) for precise alignment layouts.
-   * @default false
-   */
   clean?: boolean;
+  animate?: boolean;
 }
 
-// --- Component Definition ---
 export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
   (
     {
@@ -30,34 +56,44 @@ export const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
       size = "lg",
       fluid = false,
       clean = false,
-      className = "",
+      className,
+      animate = true,
+      variant = "modern",
       ...props
     },
     ref
   ) => {
-    // Sizing maps matching standard viewport breakdowns
-    const sizeMaps: Record<ContainerSize, string> = {
-      sm: "max-w-screen-sm",    // max-width: 640px
-      md: "max-w-screen-md",    // max-width: 768px
-      lg: "max-w-screen-lg",    // max-width: 1024px
-      xl: "max-w-screen-xl",    // max-width: 1280px
-      "2xl": "max-w-screen-2xl",// max-width: 1536px
-    };
+    const resolvedSize = fluid ? undefined : size;
 
-    // Responsive gutter paddings block config
-    const basePaddings = clean ? "" : "px-4 sm:px-6 lg:px-8";
-    
-    // Choose dynamic max width bounds based on fluid boolean status
-    const maxWidthConfig = fluid ? "max-w-full" : sizeMaps[size];
+    const resolvedClassName = cn(
+      containerVariants({ size: resolvedSize, gutter: !clean, variant }),
+      fluid && "max-w-full",
+      className
+    );
+
+    if (animate) {
+      return (
+        <motion.section
+          ref={ref}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
+          className={resolvedClassName}
+          {...(props as Record<string, unknown>)}
+        >
+          {children}
+        </motion.section>
+      );
+    }
 
     return (
-      <div
+      <section
         ref={ref}
-        className={`w-full mx-auto ${basePaddings} ${maxWidthConfig} ${className}`}
+        className={resolvedClassName}
         {...props}
       >
         {children}
-      </div>
+      </section>
     );
   }
 );

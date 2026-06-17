@@ -1,18 +1,24 @@
 "use client";
 
 import * as React from "react";
+import { cn } from "@/lib/utils";
 
 export interface ScrollAreaProps extends React.HTMLAttributes<HTMLDivElement> {
-  /** The direction axis orientation of the scroll area track. */
   orientation?: "vertical" | "horizontal" | "both";
-  /** Forces the scroll gutter layout mechanism to preserve screen spacing, eliminating layout shifts. */
   preventShift?: boolean;
 }
 
 export const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
-  ({ className = "", orientation = "vertical", preventShift = false, children, ...props }, ref) => {
-    
-    // Compute targeted axis vectors
+  (
+    {
+      className,
+      orientation = "vertical",
+      preventShift = false,
+      children,
+      ...props
+    },
+    ref
+  ) => {
     const overflowClass = {
       vertical: "overflow-y-auto overflow-x-hidden",
       horizontal: "overflow-x-auto overflow-y-hidden",
@@ -22,7 +28,14 @@ export const ScrollArea = React.forwardRef<HTMLDivElement, ScrollAreaProps>(
     return (
       <div
         ref={ref}
-        className={`custom-scrollbar ${overflowClass} ${className}`}
+        tabIndex={0}
+        role="region"
+        aria-label="Scrollable area"
+        className={cn(
+          "custom-scrollbar focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 scroll-smooth",
+          overflowClass,
+          className
+        )}
         style={{
           scrollbarGutter: preventShift ? "stable" : "auto",
         }}

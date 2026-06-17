@@ -249,7 +249,7 @@ export default function ComponentsPage() {
                       {category.title}
                     </h2>
                     <p className="max-w-xl text-xs leading-relaxed text-muted-foreground">
-                      {category.description}  
+                      {category.description}
                     </p>
                   </div>
                 </div>

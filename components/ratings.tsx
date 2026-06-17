@@ -4,6 +4,7 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { IconStar, IconStarFilled } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
 
 export const ratingVariants = cva("flex items-center gap-1 select-none", {
   variants: {
@@ -21,17 +22,11 @@ export const ratingVariants = cva("flex items-center gap-1 select-none", {
 export interface RatingsProps
   extends Omit<React.HTMLAttributes<HTMLDivElement>, "onChange">,
     VariantProps<typeof ratingVariants> {
-  /** The current rating quantitative numeric value. */
   value?: number;
-  /** Maximum rating value scale ceiling (i.e., Total count of star nodes to map). */
   max?: number;
-  /** Strips out interaction triggers, locking input parameters into display-only mode. */
   readOnly?: boolean;
-  /** Toggles high-precision split-node monitoring for half-increment selection. */
   allowHalf?: boolean;
-  /** Injects a bespoke color string definition targeting filled active rating states. */
   activeColorClass?: string;
-  /** Action intercept callback fired when a scalar segment is committed. */
   onChange?: (value: number) => void;
 }
 
@@ -60,7 +55,8 @@ export const Ratings = React.forwardRef<HTMLDivElement, RatingsProps>(
     return (
       <div
         ref={ref}
-        role={readOnly ? undefined : "slider"}
+        role={readOnly ? "img" : "radiogroup"}
+        aria-label={readOnly ? `Rating: ${value} out of ${max}` : "Rating"}
         aria-valuenow={displayedValue}
         aria-valuemin={0}
         aria-valuemax={max}
@@ -75,23 +71,30 @@ export const Ratings = React.forwardRef<HTMLDivElement, RatingsProps>(
           const isHalfActive = allowHalf && !isFullyActive && displayedValue >= starPosition - 0.5;
 
           return (
-            <div
+            <motion.div
               key={index}
-              className={`relative h-[var(--star-size)] w-[var(--star-size)] transition-transform ${
-                readOnly ? "cursor-default" : "cursor-pointer active:scale-95 hover:scale-110"
-              }`}
+              whileHover={readOnly ? undefined : { scale: 1.1 }}
+              whileTap={readOnly ? undefined : { scale: 0.95 }}
+              transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
+              className={cn(
+                "relative h-[var(--star-size)] w-[var(--star-size)]",
+                readOnly ? "cursor-default" : "cursor-pointer"
+              )}
+              role={readOnly ? undefined : "radio"}
+              aria-checked={readOnly ? undefined : value === starPosition}
+              aria-label={`${starPosition} star${starPosition !== 1 ? "s" : ""}`}
+              tabIndex={readOnly ? undefined : 0}
             >
-              {/* Underlying Base Structure (Empty State) */}
               <IconStar className="absolute inset-0 h-full w-full text-muted-foreground/20 stroke-[1.5]" />
 
-              {/* Mask Filling Layers */}
               <AnimatePresence>
                 {isFullyActive && (
                   <motion.div
-                    initial={{ scale: 0.8, opacity: 0 }}
+                    initial={{ scale: 0.6, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    exit={{ scale: 0.8, opacity: 0 }}
-                    className={`absolute inset-0 h-full w-full ${activeColorClass}`}
+                    exit={{ scale: 0.6, opacity: 0 }}
+                    transition={{ type: "spring", stiffness: 500, damping: 25 }}
+                    className={cn("absolute inset-0 h-full w-full", activeColorClass)}
                   >
                     <IconStarFilled className="h-full w-full" />
                   </motion.div>
@@ -100,14 +103,13 @@ export const Ratings = React.forwardRef<HTMLDivElement, RatingsProps>(
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className={`absolute inset-y-0 left-0 w-1/2 overflow-hidden ${activeColorClass}`}
+                    className={cn("absolute inset-y-0 left-0 w-1/2 overflow-hidden", activeColorClass)}
                   >
                     <IconStarFilled className="h-[var(--star-size)] w-[var(--star-size)] max-w-none" />
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              {/* Interactive Hit Target Masks (Stripped when Read Only) */}
               {!readOnly && (
                 <div className="absolute inset-0 flex h-full w-full z-10">
                   {allowHalf ? (
@@ -132,7 +134,7 @@ export const Ratings = React.forwardRef<HTMLDivElement, RatingsProps>(
                   )}
                 </div>
               )}
-            </div>
+            </motion.div>
           );
         })}
       </div>

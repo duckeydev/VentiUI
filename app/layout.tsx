@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ThemeProvider } from "@/lib/theme-engine";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,7 +18,8 @@ export const metadata: Metadata = {
     default: "VentiUI",
     template: "%s | VentiUI",
   },
-  description: "An expressive, accessible and polished component library for React.",
+  description:
+    "An expressive, accessible and polished component library for React.",
 };
 
 export default function RootLayout({
@@ -26,8 +28,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}>
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
+      <body className="min-h-full flex flex-col">
+        <ThemeProvider>{children}</ThemeProvider>
+      </body>
     </html>
   );
 }

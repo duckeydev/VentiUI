@@ -1,7 +1,9 @@
 "use client";
 
 import * as React from "react";
+import { motion } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
 
 export const gridVariants = cva("grid", {
   variants: {
@@ -28,27 +30,58 @@ export const gridVariants = cva("grid", {
       end: "items-end",
       stretch: "items-stretch",
     },
+    variant: {
+      modern: "",
+      minimal: "",
+      glass: "backdrop-blur-sm bg-white/5 dark:bg-black/10 rounded-xl",
+      macos: "bg-card/30 backdrop-blur-sm rounded-xl",
+    },
   },
   defaultVariants: {
     cols: "default",
     gap: "md",
     align: "stretch",
+    variant: "modern",
   },
 });
 
 export interface GridProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof gridVariants> {
-  /** Renders the inner element wrapper layout as a matching `GridItem` child tree. */
   as?: React.ElementType;
+  staggerChildren?: boolean;
 }
 
+const staggerContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.06,
+    },
+  },
+};
+
 export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
-  ({ className, cols, gap, align, as: Component = "div", ...props }, ref) => {
+  ({ className, cols, gap, align, variant, as: Component = "div", staggerChildren = false, ...props }, ref) => {
+    const combinedClassName = cn(gridVariants({ cols, gap, align, variant, className }));
+
+    if (staggerChildren && Component === "div") {
+      return (
+        <motion.div
+          ref={ref}
+          initial="hidden"
+          animate="visible"
+          variants={staggerContainer}
+          className={combinedClassName}
+          {...(props as Record<string, unknown>)}
+        />
+      );
+    }
+
     return (
       <Component
         ref={ref}
-        className={gridVariants({ cols, gap, align, className })}
+        className={combinedClassName}
         {...props}
       />
     );
@@ -56,36 +89,35 @@ export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
 );
 Grid.displayName = "Grid";
 
-/* Separate structural primitive to manage complex track spans cleanly */
 export interface GridItemProps extends React.HTMLAttributes<HTMLDivElement> {
   as?: React.ElementType;
-  /** Explicit column span allocations mapping cleanly across standard grid tiers. */
   colSpan?: "auto" | "full" | 1 | 2 | 3 | 4 | 5 | 6 | 8 | 9 | 10 | 12;
 }
 
+const spanMaps: Record<NonNullable<GridItemProps["colSpan"]>, string> = {
+  auto: "col-auto",
+  full: "col-span-full",
+  1: "col-span-1",
+  2: "col-span-1 sm:col-span-2",
+  3: "col-span-1 sm:col-span-3",
+  4: "col-span-2 sm:col-span-4",
+  5: "col-span-2 sm:col-span-5",
+  6: "col-span-3 sm:col-span-6",
+  8: "col-span-4 sm:col-span-8",
+  9: "col-span-4 sm:col-span-9",
+  10: "col-span-4 sm:col-span-10",
+  12: "col-span-full",
+};
+
 export const GridItem = React.forwardRef<HTMLDivElement, GridItemProps>(
   ({ className, colSpan, as: Component = "div", ...props }, ref) => {
-    const spanMaps = {
-      auto: "col-auto",
-      full: "col-span-full",
-      1: "col-span-1",
-      2: "col-span-1 sm:col-span-2",
-      3: "col-span-1 sm:col-span-3",
-      4: "col-span-2 sm:col-span-4",
-      5: "col-span-2 sm:col-span-5",
-      6: "col-span-3 sm:col-span-6",
-      8: "col-span-4 sm:col-span-8",
-      9: "col-span-4 sm:col-span-9",
-      10: "col-span-4 sm:col-span-10",
-      12: "col-span-full",
-    };
-
     const spanClass = colSpan ? spanMaps[colSpan] : "";
+    const combinedClassName = cn(spanClass, className);
 
     return (
       <Component
         ref={ref}
-        className={`${spanClass} ${className || ""}`}
+        className={combinedClassName}
         {...props}
       />
     );

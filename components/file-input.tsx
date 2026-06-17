@@ -1,8 +1,12 @@
+'use client';
+
 import * as React from "react";
 import { cva, type VariantProps } from "class-variance-authority";
 import { IconUpload, IconFile, IconX } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 export const fileInputVariants = cva(
   "relative flex w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed border-border bg-muted/30 px-6 py-8 text-center transition-colors hover:bg-muted/50 hover:border-primary/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
@@ -48,7 +52,9 @@ export const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
 
     return (
       <div className="w-full space-y-3">
-        <div
+        <motion.div
+          animate={{ scale: isDragOver ? 1.02 : 1 }}
+          transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
           className={cn(
             fileInputVariants({ state: isDragOver ? "drag" : error ? "error" : "idle", className })
           )}
@@ -74,9 +80,13 @@ export const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
             {...props}
           />
           <label htmlFor={id} className="flex flex-col items-center gap-2 cursor-pointer">
-            <div className="rounded-full bg-background p-2.5 shadow-sm border border-border/50">
+            <motion.div
+              animate={{ scale: isDragOver ? 1.1 : 1 }}
+              transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
+              className="rounded-full bg-background p-2.5 shadow-sm border border-border/50"
+            >
               <IconUpload className="h-5 w-5 text-muted-foreground" />
-            </div>
+            </motion.div>
             <div className="space-y-1">
               <p className="text-sm font-semibold text-foreground">
                 {label || "Click to upload or drag and drop"}
@@ -84,19 +94,24 @@ export const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
               {description && <p className="text-xs text-muted-foreground">{description}</p>}
             </div>
           </label>
-        </div>
+        </motion.div>
 
         <AnimatePresence>
           {files.length > 0 && (
             <motion.div
-              initial={{ opacity: 0, y: -4 }}
+              initial={{ opacity: 0, y: 4 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
+              exit={{ opacity: 0, y: 4 }}
+              transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
               className="space-y-2"
             >
               {files.map((file, index) => (
-                <div
+                <motion.div
                   key={`${file.name}-${index}`}
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, x: -8 }}
+                  transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
                   className="flex items-center gap-2 rounded-lg border border-border bg-card px-3 py-2 text-xs"
                 >
                   <IconFile className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -105,22 +120,32 @@ export const FileInput = React.forwardRef<HTMLInputElement, FileInputProps>(
                   <button
                     type="button"
                     onClick={() => removeFile(index)}
-                    className="rounded p-1 text-muted-foreground hover:text-destructive transition-colors"
+                    className="rounded p-1 text-muted-foreground hover:text-destructive transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                     aria-label={`Remove ${file.name}`}
                   >
                     <IconX className="h-3.5 w-3.5" />
                   </button>
-                </div>
+                </motion.div>
               ))}
             </motion.div>
           )}
         </AnimatePresence>
 
-        {error && (
-          <p id={errorId} className="text-xs font-medium text-destructive" role="alert">
-            {error}
-          </p>
-        )}
+        <AnimatePresence>
+          {error && (
+            <motion.p
+              id={errorId}
+              role="alert"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 4 }}
+              transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
+              className="text-xs font-medium text-destructive"
+            >
+              {error}
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
     );
   }

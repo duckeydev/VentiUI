@@ -4,6 +4,9 @@ import * as React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { IconX, IconInfoCircle, IconAlertTriangle, IconCheck } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 export type ToastType = "default" | "success" | "error" | "warning" | "info";
 
@@ -42,30 +45,57 @@ const icons: Record<ToastType, React.ReactNode | null> = {
 };
 
 export function ToastMessage({ id, title, description, type = "default", duration = 5000, onClose }: ToastProps) {
+  const [remaining, setRemaining] = React.useState(duration);
+  const [isPaused, setIsPaused] = React.useState(false);
+  const startTimeRef = React.useRef(Date.now());
+  const pausedAtRef = React.useRef<number | null>(null);
+
   React.useEffect(() => {
-    if (duration === Infinity) return;
-    const timer = setTimeout(() => onClose(id), duration);
+    if (duration === Infinity || isPaused) return;
+
+    const elapsed = pausedAtRef.current ? Date.now() - pausedAtRef.current : 0;
+    const remainingMs = remaining - elapsed;
+    if (remainingMs <= 0) {
+      onClose(id);
+      return;
+    }
+
+    startTimeRef.current = Date.now();
+    const timer = setTimeout(() => onClose(id), remainingMs);
     return () => clearTimeout(timer);
-  }, [id, duration, onClose]);
+  }, [id, duration, onClose, isPaused, remaining]);
+
+  const handleMouseEnter = () => {
+    if (duration === Infinity) return;
+    setIsPaused(true);
+    pausedAtRef.current = Date.now();
+  };
+
+  const handleMouseLeave = () => {
+    if (duration === Infinity) return;
+    setIsPaused(false);
+  };
 
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 30, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
+      initial={{ opacity: 0, x: 40, scale: 0.95 }}
+      animate={{ opacity: 1, x: 0, scale: 1 }}
       exit={{ opacity: 0, x: 40, scale: 0.9, transition: { duration: 0.2 } }}
       whileHover={{ y: -2 }}
       transition={{ type: "spring", stiffness: 380, damping: 28 }}
+      role="status"
+      aria-live="polite"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className={toastVariants({ type })}
     >
-      {/* Dynamic Context Graphic Vector Slot */}
       {icons[type as ToastType] && (
         <div className="mt-0.5 shrink-0 flex items-center justify-center p-1 rounded-lg bg-secondary/50 border border-border/40">
           {icons[type as ToastType]}
         </div>
       )}
 
-      {/* Primary Message Column Layout */}
       <div className="flex-1 flex flex-col gap-0.5 pr-2">
         <h4 className="text-sm font-bold text-foreground tracking-tight">{title}</h4>
         {description && (
@@ -75,31 +105,28 @@ export function ToastMessage({ id, title, description, type = "default", duratio
         )}
       </div>
 
-      {/* Manual Intercept Dismissal Button */}
       <button
         onClick={() => onClose(id)}
         type="button"
-        className="text-muted-foreground/50 hover:text-foreground cursor-pointer transition-colors shrink-0 p-1 hover:bg-secondary rounded-md"
-        aria-label="Dismiss toast update notice"
+        className="text-muted-foreground/50 hover:text-foreground cursor-pointer transition-colors shrink-0 p-1 hover:bg-secondary rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+        aria-label="Dismiss toast"
       >
         <IconX className="w-3.5 h-3.5" />
       </button>
 
-      {/* Realtime Auto-Dismiss Tracking Bar Gauge */}
       {duration !== Infinity && (
-        <motion.div 
+        <motion.div
           className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary/20"
           initial={{ width: "100%" }}
-          animate={{ width: "0%" }}
-          transition={{ duration: duration / 1000, ease: "linear" }}
+          animate={{ width: isPaused ? undefined : "0%" }}
+          transition={{ duration: remaining / 1000, ease: "linear" }}
         />
       )}
     </motion.div>
   );
 }
 
-// Global Toast Context Definitions
-type ToastCtxType = { 
+type ToastCtxType = {
   toast: (props: Omit<ToastProps, "id" | "onClose">) => void;
 };
 
@@ -126,7 +153,6 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
   return (
     <ToastCtx.Provider value={{ toast: addToast }}>
       {children}
-      {/* Global Viewport Staging Canvas Layout Portal */}
       <div className="fixed bottom-4 right-4 z-[999] flex flex-col gap-2.5 pointer-events-none w-full max-w-[420px] px-4 md:px-0">
         <AnimatePresence mode="popLayout">
           {toasts.map((t) => (

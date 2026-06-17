@@ -11,23 +11,38 @@ import {
   IconSparkles,
 } from "@tabler/icons-react";
 
-import { Typography } from "@/components/typography"; 
-import { DocsBreadcrumbs, DocsOutline, DocsPageFrame, DocsPanel } from "../../../layout";
+import { Typography } from "@/components/typography";
+import {
+  DocsBreadcrumbs,
+  DocsOutline,
+  DocsPageFrame,
+  DocsPanel,
+} from "../../../layout";
 import DocsSidebar from "../../../Sidebar";
 import DocsAdjacentNav from "../../../DocsAdjacentNav";
+import CodeBlock from "@/app/components/codeblock";
+import { Badge } from "@/components";
+import { TableColumn, Table } from "@/components/table";
 
 const componentMeta = {
-  title: "Typography Core",
-  description: "An advanced typographic primitive featuring automatic document structure mapping, explicit semantic tag escapes, and built-in text compilation.",
+  title: "Typography",
+  description:
+    "Renders text with consistent typographic styles.",
   version: "v1.2.0",
-  sourceUrl: "https://github.com/venti-ui/venti/blob/main/packages/typography.tsx",
+  sourceUrl:
+    "https://github.com/venti-ui/venti/blob/main/packages/typography.tsx",
+
+  category: "layout-and-content",
+  apiDescription:
+    "The Typography Core component provides a versatile UI primitive.",
 };
 
 const examples = [
   {
     id: "semantic-decoupling",
     title: "Structural Hierarchy Escape Hatch",
-    description: "Render a large layout designed to match visual variant rules, but mapped to an explicit HTML element tag to protect document structure.",
+    description:
+      "Render a heading with one visual style but a different HTML tag.",
     code: `<Typography variant="h1" as="h2">
   Looks like an H1, but parses as an H2
 </Typography>`,
@@ -45,46 +60,64 @@ const examples = [
   {
     id: "embedded-markdown",
     title: "Inline Markdown Compiling",
-    description: "Pass a standard text string with syntax notation markers. The component automatically maps tokens into valid sub-element trees safely.",
+    description:
+      "Use markdown syntax inside typography components.",
     code: `<Typography markdown variant="body">
   Execute \`pnpm setup\` to activate **production distribution arrays** immediately.
 </Typography>`,
     render: () => (
       <div className="p-6 border border-border/50 rounded-2xl w-full max-w-xl bg-card/40 backdrop-blur-sm text-left space-y-4">
         <Typography markdown variant="lead">
-          We can easily append **bold core strings**, *italic emphasis notes*, or standard `inline code blocks` cleanly.
+          We can easily append **bold core strings**, *italic emphasis notes*,
+          or standard `inline code blocks` cleanly.
         </Typography>
         <Typography markdown variant="body">
-          This feature safely parses symbols without relying on dangerous inner HTML rendering tracks, keeping your application secure.
+          This feature safely parses symbols without relying on dangerous inner
+          HTML rendering tracks, keeping your application secure.
         </Typography>
       </div>
     ),
   },
 ];
 
-const apiProperties = [
-  { name: "variant", type: "'h1' | 'h2' | 'h3' | 'h4' | 'body' | 'lead' | 'small' | 'code'", default: "'body'", description: "Controls structural styling parameters like weight, font sizing, tracking, and default colors." },
-  { name: "as", type: "React.ElementType", default: "calculated", description: "Explicit element override tag used to decouple design values from strict structural layout trees." },
-  { name: "markdown", type: "boolean", default: "false", description: "Enables safe scanning for inline markup syntax, converting patterns into stylized text nodes." },
+interface ApiProperty {
+  name: string;
+  type: string;
+  default: string;
+  description: string;
+}
+
+const apiProperties: ApiProperty[] = [
+  {
+    name: "variant",
+    type: "'h1' | 'h2' | 'h3' | 'h4' | 'body' | 'lead' | 'small' | 'code'",
+    default: "'body'",
+    description:
+      "Controls structural styling parameters like weight, font sizing, tracking, and default colors.",
+  },
+  {
+    name: "as",
+    type: "React.ElementType",
+    default: "calculated",
+    description:
+      "Explicit element override tag used to decouple design values from strict structural layout trees.",
+  },
+  {
+    name: "markdown",
+    type: "boolean",
+    default: "false",
+    description:
+      "Enables safe scanning for inline markup syntax, converting patterns into stylized text nodes.",
+  },
+];
+const columns: TableColumn<ApiProperty>[] = [
+  { key: "name", header: "Property", width: "20%", className: "font-mono font-bold text-primary p-4" },
+  { key: "type", header: "Type", width: "30%", className: "font-mono text-[10px] text-muted-foreground leading-relaxed p-4" },
+  { key: "default", header: "Default", width: "15%", className: "font-mono text-foreground/70 italic p-4", render: (row: ApiProperty) => row.default || <span className="text-muted-foreground/30">&mdash;</span> },
+  { key: "description", header: "Description", width: "35%", className: "font-normal leading-relaxed text-muted-foreground p-4" },
 ];
 
 export default function TypographyDocsPage() {
-  const [copiedId, setCopiedId] = useState<string | null>(null);
-  const [activeTabs, setActiveTabs] = useState<Record<string, "preview" | "code">>({
-    "semantic-decoupling": "preview",
-    "embedded-markdown": "preview",
-  });
-
-  const handleCopy = (id: string, codeText: string) => {
-    navigator.clipboard.writeText(codeText);
-    setCopiedId(id);
-    setTimeout(() => setCopiedId(null), 2000);
-  };
-
-  const toggleTab = (id: string, tab: "preview" | "code") => {
-    setActiveTabs((prev) => ({ ...prev, [id]: tab }));
-  };
-
   return (
     <DocsPageFrame
       leftBar={
@@ -92,16 +125,29 @@ export default function TypographyDocsPage() {
           <DocsSidebar />
         </aside>
       }
-      rightBar={<DocsOutline title="On this page" items={[...examples.map(e => ({ label: e.title, href: `#${e.id}` })), { label: "Properties API", href: "#props-api" }]} />}
+      rightBar={
+        <DocsOutline
+          title="On this page"
+          items={[
+            ...examples.map((e) => ({ label: e.title, href: `#${e.id}` })),
+            { label: "Properties API", href: "#props-api" },
+          ]}
+        />
+      }
     >
       <main className="py-10 lg:col-span-7 space-y-12 lg:max-w-3xl">
-        {/* Core Header Section */}
         <div className="space-y-3 border-b border-border pb-6">
           <DocsBreadcrumbs
             items={[
               { label: "Docs", href: "/docs" },
-              { label: "Design System", href: "/docs/components#design-system" },
-              { label: "Typography", href: "/docs/components/design-system/typography" },
+              {
+                label: "Layout & Content",
+                href: "/docs/components/layout-and-content",
+              },
+              {
+                label: "Typography",
+                href: "/docs/components/layout-and-content/typography",
+              },
             ]}
           />
 
@@ -109,126 +155,45 @@ export default function TypographyDocsPage() {
             <h1 className="text-3xl font-extrabold tracking-tight text-foreground lg:text-4xl">
               {componentMeta.title}
             </h1>
-            <span className="mt-1.5 rounded bg-secondary border border-border/80 px-2 py-0.5 font-mono text-[11px] font-bold text-muted-foreground">
-              {componentMeta.version}
-            </span>
+            <Badge variant="info">{componentMeta.version}</Badge>
           </div>
-
-          <p className="text-base leading-relaxed text-muted-foreground">{componentMeta.description}</p>
-
-          <div className="flex items-center gap-3 pt-2">
-            <a
-              href={componentMeta.sourceUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1 rounded-md border border-border/60 bg-secondary/40 px-2.5 py-1 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <IconCode className="h-3.5 w-3.5" /> View Package Source
-              <IconExternalLink className="h-2.5 w-2.5 text-muted-foreground/60" />
-            </a>
-          </div>
+          <p className="text-base leading-relaxed text-muted-foreground">
+            {componentMeta.description}
+          </p>
         </div>
 
-        {/* Live Typography Scaling Previews */}
         <div className="space-y-10">
-          {examples.map((example) => {
-            const currentTab = activeTabs[example.id] || "preview";
-
-            return (
-              <section key={example.id} id={example.id} className="space-y-3 scroll-mt-20">
-                <div className="flex items-center gap-2">
-                  <IconMarkdown className="h-4 w-4 text-primary" />
-                  <h3 className="text-lg font-bold tracking-tight text-foreground">{example.title}</h3>
-                </div>
-                <p className="max-w-2xl text-xs leading-relaxed text-muted-foreground">{example.description}</p>
-
-                <DocsPanel className="overflow-hidden rounded-xl bg-card/20">
-                  <div className="flex items-center justify-between border-b border-border/50 bg-secondary/30 px-3 py-1.5">
-                    <div className="flex items-center gap-1 rounded-lg border border-border/60 bg-background/50 p-0.5 text-xs font-medium">
-                      <button
-                        onClick={() => toggleTab(example.id, "preview")}
-                        className={`flex items-center gap-1 rounded-md px-2.5 py-1 transition-all ${currentTab === "preview" ? "bg-card font-semibold text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-                      >
-                        <IconEye className="h-3.5 w-3.5" /> Preview
-                      </button>
-                      <button
-                        onClick={() => toggleTab(example.id, "code")}
-                        className={`flex items-center gap-1 rounded-md px-2.5 py-1 transition-all ${currentTab === "code" ? "bg-card font-semibold text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground"}`}
-                      >
-                        <IconCode className="h-3.5 w-3.5" /> Code
-                      </button>
-                    </div>
-                    <button
-                      onClick={() => handleCopy(example.id, example.code)}
-                      className="cursor-pointer rounded-md border border-border/60 bg-card/60 p-1.5 text-muted-foreground transition-all hover:border-border hover:text-foreground"
-                    >
-                      {copiedId === example.id ? (
-                        <IconCheck className="h-3.5 w-3.5 text-emerald-500" />
-                      ) : (
-                        <IconCopy className="h-3.5 w-3.5" />
-                      )}
-                    </button>
-                  </div>
-
-                  <div className="flex min-h-36 items-center justify-center bg-card/10 p-6 overflow-hidden">
-                    {currentTab === "preview" ? (
-                      <example.render />
-                    ) : (
-                      <pre className="w-full overflow-x-auto rounded-lg border border-border/40 bg-muted/20 p-4 font-mono text-xs leading-relaxed text-muted-foreground">
-                        <code>{example.code}</code>
-                      </pre>
-                    )}
-                  </div>
-                </DocsPanel>
-              </section>
-            );
-          })}
+          {examples.map((example) => (
+            <CodeBlock key={example.id} example={example} />
+          ))}
         </div>
 
-        {/* Configuration Properties Reference Matrix Area */}
         <section id="props-api" className="space-y-4 scroll-mt-20">
           <div className="flex items-center gap-2 border-b border-border/40 pb-2">
-            <div className="rounded-md border border-border/50 bg-secondary/50 p-1.5 text-primary">
-              <IconSparkles stroke={2} className="h-4 w-4" />
-            </div>
             <div className="space-y-0.5">
-              <h2 className="text-lg font-bold tracking-tight text-foreground">Typography API Reference</h2>
+              <h2 className="text-lg font-bold tracking-tight text-foreground">
+                Typography API Reference
+              </h2>
               <p className="text-xs text-muted-foreground">
-                Properties parameters and token bounds configuration keys accepted directly by the Typography engine.
+                All available props for this component.
               </p>
             </div>
           </div>
 
-          <DocsPanel className="overflow-hidden bg-card/30 rounded-xl border border-border/60">
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse text-left text-xs">
-                <thead>
-                  <tr className="border-b border-border/60 bg-secondary/30 font-semibold text-muted-foreground">
-                    <th className="w-[18%] p-3 font-semibold">Property</th>
-                    <th className="w-[32%] p-3 font-semibold">Type</th>
-                    <th className="w-[12%] p-3 font-semibold">Default</th>
-                    <th className="w-[38%] p-3 font-semibold">Description</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-border/40 font-medium">
-                  {apiProperties.map((prop) => (
-                    <tr key={prop.name} className="transition-colors hover:bg-secondary/20 vertical-align-top">
-                      <td className="p-3 font-mono font-bold text-primary">{prop.name}</td>
-                      <td className="p-3 font-mono text-purple-600 dark:text-purple-400 leading-relaxed">{prop.type}</td>
-                      <td className="p-3 font-mono text-foreground/70">{prop.default}</td>
-                      <td className="p-3 font-normal leading-relaxed text-muted-foreground">{prop.description}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+          <DocsPanel className="overflow-hidden rounded-xl">
+            <Table<ApiProperty>
+              variant="modern"
+              columns={columns}
+              data={apiProperties}
+              rowKey={(prop) => prop.name}
+            />
           </DocsPanel>
         </section>
 
         <DocsAdjacentNav />
 
-        <footer className="border-t border-border/30 pt-4 text-center text-xs text-muted-foreground/40">
-          © 2026 Venti UI Labs. System typographic scales.
+        <footer className="border-t border-border/30 pt-8 pb-10 text-center text-[10px] uppercase tracking-[0.2em] font-bold text-muted-foreground/40">
+          © 2026 Venti UI Labs. UI made right.
         </footer>
       </main>
     </DocsPageFrame>

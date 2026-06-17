@@ -1,5 +1,10 @@
+'use client';
+
 import * as React from "react";
+import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 export interface InputGroupProps extends React.HTMLAttributes<HTMLDivElement> {
   leftAddon?: React.ReactNode;
@@ -11,7 +16,7 @@ export interface InputGroupProps extends React.HTMLAttributes<HTMLDivElement> {
 
 export const InputGroup = React.forwardRef<HTMLDivElement, InputGroupProps>(
   ({ className, leftAddon, rightAddon, leftElement, rightElement, children, ...props }, ref) => {
-    const input = React.Children.only(children) as React.ReactElement;
+    const input = React.Children.only(children) as React.ReactElement<{ className?: string }>;
     const clonedInput = React.cloneElement(input, {
       className: cn(
         input.props.className,
@@ -25,9 +30,14 @@ export const InputGroup = React.forwardRef<HTMLDivElement, InputGroupProps>(
     return (
       <div ref={ref} className={cn("flex w-full", className)} {...props}>
         {leftAddon && (
-          <span className="inline-flex items-center rounded-l-lg border border-r-0 border-border bg-muted px-3 text-xs font-medium text-muted-foreground">
+          <motion.span
+            initial={{ opacity: 0, x: -4 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
+            className="inline-flex items-center rounded-l-lg border border-r-0 border-border bg-muted px-3 text-xs font-medium text-muted-foreground"
+          >
             {leftAddon}
-          </span>
+          </motion.span>
         )}
         <div className="relative flex-1">
           {leftElement && (
@@ -43,9 +53,14 @@ export const InputGroup = React.forwardRef<HTMLDivElement, InputGroupProps>(
           )}
         </div>
         {rightAddon && (
-          <span className="inline-flex items-center rounded-r-lg border border-l-0 border-border bg-muted px-3 text-xs font-medium text-muted-foreground">
+          <motion.span
+            initial={{ opacity: 0, x: 4 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.3, ease: EASE_OUT_EXPO }}
+            className="inline-flex items-center rounded-r-lg border border-l-0 border-border bg-muted px-3 text-xs font-medium text-muted-foreground"
+          >
             {rightAddon}
-          </span>
+          </motion.span>
         )}
       </div>
     );

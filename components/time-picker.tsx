@@ -1,6 +1,11 @@
+'use client';
+
 import * as React from "react";
 import { IconClock } from "@tabler/icons-react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 export interface TimePickerProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "value" | "onChange" | "defaultValue"> {
   label?: string;
@@ -36,9 +41,13 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>(
         {description && <p className="text-xs text-muted-foreground">{description}</p>}
 
         <div className="relative">
-          <div className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+          <motion.span
+            className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            animate={{ rotate: currentValue ? 360 : 0 }}
+            transition={{ duration: 0.5, ease: EASE_OUT_EXPO }}
+          >
             <IconClock className="h-4 w-4" />
-          </div>
+          </motion.span>
           <input
             ref={ref}
             id={id}
@@ -59,11 +68,21 @@ export const TimePicker = React.forwardRef<HTMLInputElement, TimePickerProps>(
           />
         </div>
 
-        {error && (
-          <p id={errorId} className="text-xs font-medium text-destructive" role="alert">
-            {error}
-          </p>
-        )}
+        <AnimatePresence>
+          {error && (
+            <motion.p
+              id={errorId}
+              role="alert"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 4 }}
+              transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
+              className="text-xs font-medium text-destructive"
+            >
+              {error}
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
     );
   }

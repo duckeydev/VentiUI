@@ -1,26 +1,23 @@
-import React from "react";
+"use client";
 
-// --- Types ---
+import * as React from "react";
+import { motion } from "framer-motion";
+import { cn } from "@/lib/utils";
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
+
 export type GridGaps = "none" | "xs" | "sm" | "md" | "lg" | "xl";
 export type ColumnSpan = 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | "auto" | "full";
 
-export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
-  /** Presets for row and column gutters */
-  gap?: GridGaps;
-}
+const gapClasses: Record<GridGaps, string> = {
+  none: "gap-0",
+  xs: "gap-2",
+  sm: "gap-4",
+  md: "gap-6",
+  lg: "gap-8",
+  xl: "gap-12",
+};
 
-export interface ColumnProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode;
-  /** Responsive span constraints across media breakpoints */
-  span?: ColumnSpan;
-  sm?: ColumnSpan;
-  md?: ColumnSpan;
-  lg?: ColumnSpan;
-  xl?: ColumnSpan;
-}
-
-// Helper utility to translate numerical presets smoothly to grid classes
 const getSpanClass = (span: ColumnSpan | undefined, prefix: string = "") => {
   if (!span) return "";
   if (span === "full") return `${prefix}col-span-full`;
@@ -28,22 +25,49 @@ const getSpanClass = (span: ColumnSpan | undefined, prefix: string = "") => {
   return `${prefix}col-span-${span}`;
 };
 
-// --- Grid Parent Component ---
+export interface GridProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  gap?: GridGaps;
+  animate?: boolean;
+  staggerChildren?: boolean;
+}
+
+const staggerContainer = {
+  hidden: {},
+  visible: {
+    transition: {
+      staggerChildren: 0.06,
+    },
+  },
+};
+
 export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
-  ({ children, gap = "md", className = "", ...props }, ref) => {
-    const gapClasses: Record<GridGaps, string> = {
-      none: "gap-0",
-      xs: "gap-2",
-      sm: "gap-4",
-      md: "gap-6",
-      lg: "gap-8",
-      xl: "gap-12",
-    };
+  ({ children, gap = "md", className, animate = true, staggerChildren = false, ...props }, ref) => {
+    const resolvedClassName = cn(
+      "grid grid-cols-1 sm:grid-cols-12",
+      gapClasses[gap],
+      className
+    );
+
+    if (animate) {
+      return (
+        <motion.div
+          ref={ref}
+          initial={staggerChildren ? "hidden" : undefined}
+          animate={staggerChildren ? "visible" : undefined}
+          variants={staggerChildren ? staggerContainer : undefined}
+          className={resolvedClassName}
+          {...(props as Record<string, unknown>)}
+        >
+          {children}
+        </motion.div>
+      );
+    }
 
     return (
       <div
         ref={ref}
-        className={`grid grid-cols-1 sm:grid-cols-12 ${gapClasses[gap]} ${className}`}
+        className={resolvedClassName}
         {...props}
       >
         {children}
@@ -53,19 +77,48 @@ export const Grid = React.forwardRef<HTMLDivElement, GridProps>(
 );
 Grid.displayName = "Grid";
 
-// --- Column Child Component ---
+export interface ColumnProps extends React.HTMLAttributes<HTMLDivElement> {
+  children: React.ReactNode;
+  span?: ColumnSpan;
+  sm?: ColumnSpan;
+  md?: ColumnSpan;
+  lg?: ColumnSpan;
+  xl?: ColumnSpan;
+  animate?: boolean;
+}
+
+const staggerItem = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: EASE_OUT_EXPO },
+  },
+};
+
 export const Column = React.forwardRef<HTMLDivElement, ColumnProps>(
-  ({ children, span = "full", sm, md, lg, xl, className = "", ...props }, ref) => {
-    const classes = [
+  ({ children, span = "full", sm, md, lg, xl, className, animate = false, ...props }, ref) => {
+    const classes = cn(
       getSpanClass(span),
       getSpanClass(sm, "sm:"),
       getSpanClass(md, "md:"),
       getSpanClass(lg, "lg:"),
       getSpanClass(xl, "xl:"),
-      className,
-    ]
-      .filter(Boolean)
-      .join(" ");
+      className
+    );
+
+    if (animate) {
+      return (
+        <motion.div
+          ref={ref}
+          variants={staggerItem}
+          className={classes}
+          {...(props as Record<string, unknown>)}
+        >
+          {children}
+        </motion.div>
+      );
+    }
 
     return (
       <div ref={ref} className={classes} {...props}>

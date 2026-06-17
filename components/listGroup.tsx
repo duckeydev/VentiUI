@@ -1,7 +1,11 @@
 "use client";
 
 import * as React from "react";
+import { motion } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
+import { cn } from "@/lib/utils";
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 const ListGroupContext = React.createContext<{ flush?: boolean }>({ flush: false });
 
@@ -27,42 +31,45 @@ export interface ListGroupProps
 export const ListGroup = React.forwardRef<HTMLDivElement, ListGroupProps>(
   ({ className, flush = false, children, ...props }, ref) => {
     return (
-      <ListGroupContext.Provider value={{ flush }}>
-        <div
+      <ListGroupContext.Provider value={{ flush: flush ?? false }}>
+        <motion.div
           ref={ref}
+          role="list"
+          initial="hidden"
+          animate="visible"
+          variants={{
+            hidden: {},
+            visible: {
+              transition: { staggerChildren: 0.04 },
+            },
+          }}
           className={listGroupVariants({ flush, className })}
-          {...props}
+          {...(props as any)}
         >
           {children}
-        </div>
+        </motion.div>
       </ListGroupContext.Provider>
     );
   }
 );
 ListGroup.displayName = "ListGroup";
 
-// 1. Convert ListGroupItemProps into a generic type to support polymorphism cleanly
 export type ListGroupItemProps<T extends React.ElementType = "div"> = {
-  /** Highlights the item block with the primary identity theme accent color. */
   active?: boolean;
-  /** Restricts interaction states, dimming alpha vectors and stripping link indicators. */
   disabled?: boolean;
-  /** Supplying a string value automatically transforms the component node into an HTML Anchor link tag. */
   href?: string;
-  /** Completely changes the underlying HTML container primitive to any valid polymorphic node type. */
   as?: T;
 } & Omit<React.ComponentPropsWithoutRef<T>, "active" | "disabled" | "as" | "href">;
 
-// 2. Base implementation utilizing a generic element ref assignment
 const ListGroupItemImpl = <T extends React.ElementType = "div">(
   { className, active = false, disabled = false, href, as, children, ...props }: ListGroupItemProps<T>,
-  ref: React.ComponentPropsWithRef<T>["ref"]
+  ref: React.ForwardedRef<HTMLElement>
 ) => {
   const { flush } = React.useContext(ListGroupContext);
-  
+
   const Component = as || (href ? "a" : "div");
-  
-  const itemClasses = [
+
+  const itemClasses = cn(
     "px-4 py-3 flex items-center justify-between w-full text-sm transition-all relative border-b border-border/60 last:border-b-0",
     flush && "first:pt-0 last:pb-0",
     active
@@ -70,28 +77,37 @@ const ListGroupItemImpl = <T extends React.ElementType = "div">(
       : disabled
       ? "opacity-50 pointer-events-none text-muted-foreground/60 bg-muted/30"
       : "text-foreground/90 hover:bg-secondary/60 dark:hover:bg-secondary/40 active:bg-secondary/80",
-    !disabled && (href || as || Component !== "div") ? "cursor-pointer select-none" : "",
-    className || ""
-  ].filter(Boolean).join(" ");
+    !disabled && (href || as || Component !== "div") && "cursor-pointer select-none",
+    className
+  );
 
   const finalProps = {
     ref,
     className: itemClasses,
     href,
+    role: "listitem",
     "aria-current": active ? ("page" as const) : undefined,
     "aria-disabled": disabled ? true : undefined,
     tabIndex: disabled ? -1 : (href || as ? 0 : undefined),
     ...props,
-  };
+  } as any;
 
-  return <Component {...finalProps}>{children}</Component>;
+  return (
+    <motion.div
+      variants={{
+        hidden: { opacity: 0, y: 6 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.2, ease: EASE_OUT_EXPO } },
+      }}
+    >
+      <Component {...finalProps}>{children}</Component>
+    </motion.div>
+  );
 };
 
-// 3. Cast the implementation to a brand definition that preserves generic types through forwardRef boundaries
-export const ListGroupItem = React.forwardRef(ListGroupItemImpl) as <
+export const ListGroupItem = React.forwardRef(ListGroupItemImpl as any) as unknown as <
   T extends React.ElementType = "div"
 >(
   props: ListGroupItemProps<T> & { ref?: React.ComponentPropsWithRef<T>["ref"] }
 ) => React.ReactElement;
 
-(ListGroupItem as any).displayName = "ListGroupItem";
+(ListGroupItem as unknown as { displayName: string }).displayName = "ListGroupItem";

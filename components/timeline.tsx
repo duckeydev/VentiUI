@@ -1,8 +1,12 @@
 "use client";
 
 import * as React from "react";
+import { motion } from "framer-motion";
 import { cva, type VariantProps } from "class-variance-authority";
 import { IconCircle } from "@tabler/icons-react";
+import { cn } from "@/lib/utils";
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 export const timelineVariants = cva("relative w-full flex flex-col", {
   variants: {
@@ -18,17 +22,11 @@ export const timelineVariants = cva("relative w-full flex flex-col", {
 });
 
 export interface TimelineItem {
-  /** Explicit element tracker key string. */
   id: string;
-  /** Primary bold task indicator or milestone heading text. */
   title: string;
-  /** Informational description body associated with the milestone. */
   description?: string;
-  /** Sequential stamp indicator displayed alongside the node. */
   date?: string;
-  /** Custom structural vector node override replacing the native indicator circle. */
   icon?: React.ReactNode;
-  /** Highlights the step to reflect active execution or complete state. */
   isActive?: boolean;
 }
 
@@ -43,56 +41,58 @@ export const Timeline = React.forwardRef<HTMLDivElement, TimelineProps>(
     return (
       <div
         ref={ref}
-        className={timelineVariants({ align, className })}
+        className={cn(timelineVariants({ align, className }))}
         {...props}
       >
         {items.map((item, index) => {
           const isLeft = align === "left";
           const isRight = align === "right";
           const isCenter = align === "center";
-
-          // Calculate alternating side splits for the center layout configuration
           const isEvenCenter = isCenter && index % 2 === 0;
 
           return (
-            <div
+            <motion.div
               key={item.id}
-              className={`relative w-full flex mb-8 last:mb-0 ${
-                isLeft ? "justify-start pl-12" : ""
-              } ${isRight ? "justify-end pr-12 text-right" : ""} ${
-                isCenter ? "justify-center" : ""
-              }`}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: index * 0.1, ease: EASE_OUT_EXPO }}
+              className={cn(
+                "relative w-full flex mb-8 last:mb-0",
+                isLeft && "justify-start pl-12",
+                isRight && "justify-end pr-12 text-right",
+                isCenter && "justify-center"
+              )}
             >
-              {/* Central Geometric Node Point Marker Wrap */}
-              <div
-                className={`absolute top-1.5 z-10 w-8 h-8 rounded-full border border-border bg-background flex items-center justify-center shadow-sm transition-colors ${
-                  isLeft ? "left-0" : ""
-                } ${isRight ? "right-0" : ""} ${
-                  isCenter ? "left-1/2 -translate-x-1/2" : ""
-                } ${
+              <motion.div
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                transition={{ duration: 0.3, delay: index * 0.1, ease: EASE_OUT_EXPO }}
+                className={cn(
+                  "absolute top-1.5 z-10 w-8 h-8 rounded-full border border-border bg-background flex items-center justify-center shadow-sm transition-colors",
+                  isLeft && "left-0",
+                  isRight && "right-0",
+                  isCenter && "left-1/2 -translate-x-1/2",
                   item.isActive
                     ? "ring-4 ring-primary/10 border-primary text-primary"
                     : "text-muted-foreground/60"
-                }`}
+                )}
               >
                 {item.icon || (
                   <IconCircle
-                    className={`w-3.5 h-3.5 ${
+                    className={cn(
+                      "w-3.5 h-3.5",
                       item.isActive ? "fill-primary/20 stroke-[2.5]" : "stroke-[2]"
-                    }`}
+                    )}
                   />
                 )}
-              </div>
+              </motion.div>
 
-              {/* Sequential Content Blocks Grid Split Mapping */}
               {isCenter ? (
                 <div className="grid grid-cols-2 w-full gap-8">
-                  {/* Left Column Content Slot */}
-                  <div className={`flex flex-col gap-1 pt-1 ${isEvenCenter ? "text-right items-end pr-4" : "opacity-0 pointer-events-none select-none"}`}>
+                  <div className={cn("flex flex-col gap-1 pt-1", isEvenCenter ? "text-right items-end pr-4" : "opacity-0 pointer-events-none select-none")}>
                     {isEvenCenter && <TimelineContent item={item} />}
                   </div>
-                  {/* Right Column Content Slot */}
-                  <div className={`flex flex-col gap-1 pt-1 ${!isEvenCenter ? "text-left items-start pl-4" : "opacity-0 pointer-events-none select-none"}`}>
+                  <div className={cn("flex flex-col gap-1 pt-1", !isEvenCenter ? "text-left items-start pl-4" : "opacity-0 pointer-events-none select-none")}>
                     {!isEvenCenter && <TimelineContent item={item} />}
                   </div>
                 </div>
@@ -101,7 +101,7 @@ export const Timeline = React.forwardRef<HTMLDivElement, TimelineProps>(
                   <TimelineContent item={item} />
                 </div>
               )}
-            </div>
+            </motion.div>
           );
         })}
       </div>
@@ -111,7 +111,6 @@ export const Timeline = React.forwardRef<HTMLDivElement, TimelineProps>(
 
 Timeline.displayName = "Timeline";
 
-/* Internal isolated micro-structural display proxy wrapper */
 function TimelineContent({ item }: { item: TimelineItem }) {
   return (
     <>
@@ -120,7 +119,7 @@ function TimelineContent({ item }: { item: TimelineItem }) {
           {item.date}
         </span>
       )}
-      <h4 className={`text-sm font-bold tracking-tight text-foreground`}>
+      <h4 className="text-sm font-bold tracking-tight text-foreground">
         {item.title}
       </h4>
       {item.description && (

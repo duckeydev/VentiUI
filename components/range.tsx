@@ -1,5 +1,10 @@
+'use client';
+
 import * as React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 export interface RangeProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type" | "onChange"> {
   label?: string;
@@ -33,9 +38,15 @@ export const Range = React.forwardRef<HTMLInputElement, RangeProps>(
             </label>
           )}
           {showValue && (
-            <span className="rounded-md bg-secondary px-2 py-0.5 font-mono text-xs font-semibold text-secondary-foreground">
+            <motion.span
+              key={currentValue}
+              initial={{ scale: 0.9, opacity: 0.5 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.15, ease: EASE_OUT_EXPO }}
+              className="rounded-md bg-secondary px-2 py-0.5 font-mono text-xs font-semibold text-secondary-foreground"
+            >
               {currentValue}
-            </span>
+            </motion.span>
           )}
         </div>
         {description && <p className="text-xs text-muted-foreground">{description}</p>}
@@ -50,6 +61,9 @@ export const Range = React.forwardRef<HTMLInputElement, RangeProps>(
             step={step}
             value={currentValue}
             onChange={handleChange}
+            aria-valuemin={Number(min)}
+            aria-valuemax={Number(max)}
+            aria-valuenow={currentValue}
             aria-invalid={error ? "true" : undefined}
             aria-describedby={errorId}
             className={cn(
@@ -69,11 +83,21 @@ export const Range = React.forwardRef<HTMLInputElement, RangeProps>(
           />
         </div>
 
-        {error && (
-          <p id={errorId} className="text-xs font-medium text-destructive" role="alert">
-            {error}
-          </p>
-        )}
+        <AnimatePresence>
+          {error && (
+            <motion.p
+              id={errorId}
+              role="alert"
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 4 }}
+              transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
+              className="text-xs font-medium text-destructive"
+            >
+              {error}
+            </motion.p>
+          )}
+        </AnimatePresence>
       </div>
     );
   }

@@ -1,5 +1,10 @@
+'use client';
+
 import * as React from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { cn } from "@/lib/utils";
+
+const EASE_OUT_EXPO = [0.16, 1, 0.3, 1] as const;
 
 interface RadioGroupContextValue {
   value?: string;
@@ -24,6 +29,7 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
     const [internalValue, setInternalValue] = React.useState(defaultValue);
     const isControlled = value !== undefined;
     const currentValue = isControlled ? value : internalValue;
+    const generatedName = React.useId();
 
     return (
       <RadioGroupContext.Provider
@@ -33,11 +39,17 @@ export const RadioGroup = React.forwardRef<HTMLDivElement, RadioGroupProps>(
             if (!isControlled) setInternalValue(v);
             onValueChange?.(v);
           },
-          name: name || React.useId(),
+          name: name || generatedName,
           disabled,
         }}
       >
-        <div ref={ref} className={cn("space-y-3", className)} role="radiogroup" aria-label={label} {...props}>
+        <div
+          ref={ref}
+          className={cn("space-y-3", className)}
+          role="radiogroup"
+          aria-label={label}
+          {...props}
+        >
           {label && <span className="text-sm font-semibold text-foreground">{label}</span>}
           <div className="space-y-2">{children}</div>
         </div>
@@ -51,14 +63,16 @@ export interface RadioProps extends Omit<React.InputHTMLAttributes<HTMLInputElem
   value: string;
   label?: React.ReactNode;
   description?: React.ReactNode;
+  error?: string;
 }
 
 export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
-  ({ className, label, description, value, disabled, ...props }, ref) => {
+  ({ className, label, description, value, disabled, error, ...props }, ref) => {
     const ctx = React.useContext(RadioGroupContext);
     const id = React.useId();
     const isChecked = ctx.value === value;
     const isDisabled = disabled || ctx.disabled;
+    const errorId = error ? `${id}-error` : undefined;
 
     return (
       <div className={cn("flex items-start gap-3", className)}>
@@ -67,11 +81,15 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
             ref={ref}
             id={id}
             type="radio"
+            role="radio"
             name={ctx.name}
             value={value}
             checked={isChecked}
             disabled={isDisabled}
             onChange={() => ctx.onValueChange?.(value)}
+            aria-checked={isChecked}
+            aria-invalid={error ? "true" : undefined}
+            aria-describedby={errorId}
             className="peer sr-only"
             {...props}
           />
@@ -81,14 +99,15 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
               "flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border-2 border-border bg-background transition-all",
               "peer-focus-visible:ring-2 peer-focus-visible:ring-primary/40 peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-background",
               "peer-checked:border-primary peer-checked:bg-background",
-              "peer-disabled:cursor-not-allowed peer-disabled:opacity-50"
+              "peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
+              error && "border-destructive"
             )}
           >
-            <span
-              className={cn(
-                "h-2.5 w-2.5 rounded-full bg-primary transition-transform",
-                isChecked ? "scale-100" : "scale-0"
-              )}
+            <motion.span
+              initial={false}
+              animate={{ scale: isChecked ? 1 : 0 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20, duration: 0.2 }}
+              className="h-2.5 w-2.5 rounded-full bg-primary"
             />
           </label>
         </div>
@@ -99,6 +118,21 @@ export const Radio = React.forwardRef<HTMLInputElement, RadioProps>(
             </label>
           )}
           {description && <p className="text-xs text-muted-foreground">{description}</p>}
+          <AnimatePresence>
+            {error && (
+              <motion.p
+                id={errorId}
+                role="alert"
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 4 }}
+                transition={{ duration: 0.2, ease: EASE_OUT_EXPO }}
+                className="text-xs font-medium text-destructive"
+              >
+                {error}
+              </motion.p>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     );

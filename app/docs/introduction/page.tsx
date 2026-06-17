@@ -99,8 +99,8 @@ export default function IntroductionPage() {
                 </CardTitle>
                 <CardDescription>
                   <p className="text-sm text-muted-foreground">
-                    Accessible inputs, selects, and validation-ready patterns that
-                    reduce friction.
+                    Accessible inputs, selects, and validation-ready patterns
+                    that reduce friction.
                   </p>
                 </CardDescription>
               </CardHeader>
@@ -140,13 +140,17 @@ export default function IntroductionPage() {
 
         <section id="getting-started" className="space-y-4">
           <h2 className="text-lg font-semibold">Getting started</h2>
-<List as="ol" marker="decimal" spacing="loose">
-  <ListItem>Install VentiUI via your package manager.</ListItem>
-  <ListItem>              Wrap your app with the theme provider and Tailwind variables.
-</ListItem>
-  <ListItem>              Browse the components and copy examples to prototype quickly.
-</ListItem>
-</List>
+          <List as="ol" marker="decimal" spacing="loose">
+            <ListItem>Install VentiUI via your package manager.</ListItem>
+            <ListItem>
+              {" "}
+              Wrap your app with the theme provider and Tailwind variables.
+            </ListItem>
+            <ListItem>
+              {" "}
+              Browse the components and copy examples to prototype quickly.
+            </ListItem>
+          </List>
         </section>
         <div className="grid grid-cols-2 gap-4 border-t border-border pt-8 text-sm">
           <Link

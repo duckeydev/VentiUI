@@ -43,7 +43,9 @@ export default function SidebarClient() {
   } as const satisfies Variants;
 
   // Track manual user toggles only
-  const [userToggledGroups, setUserToggledGroups] = useState<Record<string, boolean>>({});
+  const [userToggledGroups, setUserToggledGroups] = useState<
+    Record<string, boolean>
+  >({});
 
   // 1. Find the true active group by checking the longest matching href first
   const currentActiveGroup = useMemo(() => {
@@ -80,8 +82,8 @@ export default function SidebarClient() {
         title === currentActiveGroup
           ? false
           : isExplicitlyToggled
-          ? userToggledGroups[title]
-          : title !== "Getting Started";
+            ? userToggledGroups[title]
+            : title !== "Getting Started";
 
       return {
         title,
@@ -113,7 +115,9 @@ export default function SidebarClient() {
     >
       <div className="space-y-6">
         {groups.map((group) => {
-          const isUncollapsible = group.title === "Getting Started" || group.title === currentActiveGroup;
+          const isUncollapsible =
+            group.title === "Getting Started" ||
+            group.title === currentActiveGroup;
 
           return (
             <section key={group.title} className="space-y-2">
@@ -148,7 +152,11 @@ export default function SidebarClient() {
                     className="space-y-1.5 border-l border-border pl-3 font-medium text-muted-foreground overflow-hidden"
                   >
                     {group.items.map((link) => (
-                      <motion.li key={link.href} variants={itemVariants} whileHover={{ x: 2 }}>
+                      <motion.li
+                        key={link.href}
+                        variants={itemVariants}
+                        whileHover={{ x: 2 }}
+                      >
                         <Link
                           href={link.href}
                           className="relative -ml-3 block py-0.5 pl-3 transition-colors duration-200"
@@ -157,7 +165,11 @@ export default function SidebarClient() {
                             <motion.span
                               layoutId="sidebar-active-indicator"
                               className="absolute inset-y-0 -left-px w-0.5 rounded bg-primary"
-                              transition={{ type: "spring", stiffness: 520, damping: 42 }}
+                              transition={{
+                                type: "spring",
+                                stiffness: 520,
+                                damping: 42,
+                              }}
                             />
                           ) : null}
                           <span

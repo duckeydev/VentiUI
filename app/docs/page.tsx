@@ -76,15 +76,15 @@ export default function IntroductionPage() {
           </p>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-            <Card variant="modern"  hoverable className="max-w-sm">
+            <Card variant="modern" hoverable className="max-w-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <IconLayoutGrid className="h-6 w-6 text-foreground/90" />
                   Layout Primitives
                 </CardTitle>
                 <CardDescription className="text-sm text-muted-foreground">
-                    Experiment with active interface styles using the runtime
-                    token modifiers above.
+                  Experiment with active interface styles using the runtime
+                  token modifiers above.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -122,8 +122,8 @@ export default function IntroductionPage() {
                   Design tokens
                 </CardTitle>
                 <CardDescription className="text-sm text-muted-foreground">
-                    Themeable CSS variables for colors, radii, and spacing to
-                    align with your brand.
+                  Themeable CSS variables for colors, radii, and spacing to
+                  align with your brand.
                 </CardDescription>
               </CardHeader>
             </Card>
@@ -132,13 +132,17 @@ export default function IntroductionPage() {
 
         <section id="getting-started" className="space-y-4">
           <h2 className="text-lg font-semibold">Getting started</h2>
-<List as="ol" marker="decimal" spacing="loose">
-  <ListItem>Install VentiUI via your package manager.</ListItem>
-  <ListItem>              Wrap your app with the theme provider and Tailwind variables.
-</ListItem>
-  <ListItem>              Browse the components and copy examples to prototype quickly.
-</ListItem>
-</List>
+          <List as="ol" marker="decimal" spacing="loose">
+            <ListItem>Install VentiUI via your package manager.</ListItem>
+            <ListItem>
+              {" "}
+              Wrap your app with the theme provider and Tailwind variables.
+            </ListItem>
+            <ListItem>
+              {" "}
+              Browse the components and copy examples to prototype quickly.
+            </ListItem>
+          </List>
         </section>
         <div className="grid grid-cols-2 gap-4 border-t border-border pt-8 text-sm">
           <Link

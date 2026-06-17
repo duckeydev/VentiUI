@@ -104,7 +104,13 @@ const componentList = [
 
 const GLYPHS = "§¶█▒▓░@#$%&*!?<>{}[]";
 
-export function GlitchText({ text, speed = 100 }: { text: string; speed?: number }) {
+export function GlitchText({
+  text,
+  speed = 100,
+}: {
+  text: string;
+  speed?: number;
+}) {
   const [displayText, setDisplayText] = useState(text);
 
   useEffect(() => {
@@ -119,7 +125,7 @@ export function GlitchText({ text, speed = 100 }: { text: string; speed?: number
             }
             return char;
           })
-          .join("")
+          .join(""),
       );
     }, speed);
 
@@ -166,11 +172,6 @@ export default function Home() {
                 GitHub
               </Link>
             </nav>
-          </div>
-          <div className="flex items-center gap-4">
-            <span className="rounded border border-neutral-800 bg-neutral-900/60 px-2 py-0.5 font-mono text-xs text-neutral-400">
-              v1.0.0
-            </span>
           </div>
         </div>
       </header>
@@ -224,7 +225,8 @@ export default function Home() {
             </Typography>
             <Typography className="text-xl text-neutral-400 max-w-2xl font-light">
               Beautifully designed, highly customizable, and accessible React
-              components. Built for speed, modularity, and an uncompromising developer experience.
+              components. Built for speed, modularity, and an uncompromising
+              developer experience.
             </Typography>
           </motion.div>
 
@@ -249,7 +251,7 @@ export default function Home() {
         {/* Gradients to fade edges */}
         <div className="absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-neutral-950/40 to-transparent z-10" />
         <div className="absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-neutral-950/40 to-transparent z-10" />
-        
+
         <div className="flex whitespace-nowrap gap-12 animate-marquee inline-flex">
           {componentList.concat(componentList).map((comp, idx) => (
             <span
@@ -286,7 +288,8 @@ export default function Home() {
               className="text-neutral-400 max-w-2xl text-lg"
             >
               Over 50+ meticulously crafted components out of the box. From
-              simple buttons to complex data grids, command palettes, and time pickers.
+              simple buttons to complex data grids, command palettes, and time
+              pickers.
             </motion.p>
           </motion.div>
 
@@ -327,7 +330,9 @@ export default function Home() {
                   <h3 className="font-semibold text-lg text-neutral-50 mb-2">
                     {feature.title}
                   </h3>
-                  <p className="text-neutral-400 text-sm leading-relaxed">{feature.desc}</p>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    {feature.desc}
+                  </p>
                 </Card>
               </motion.div>
             ))}
@@ -344,21 +349,29 @@ export default function Home() {
                 <IconShieldCheck className="w-6 h-6" />
               </div>
               <h4 className="text-4xl font-extrabold text-neutral-50">100%</h4>
-              <p className="text-neutral-400 font-medium text-sm tracking-wide uppercase">Lighthouse Score</p>
+              <p className="text-neutral-400 font-medium text-sm tracking-wide uppercase">
+                Lighthouse Score
+              </p>
             </div>
             <div className="py-6 md:py-0 flex flex-col items-center justify-center space-y-2">
               <div className="w-12 h-12 rounded-full bg-sky-500/10 text-sky-400 flex items-center justify-center mb-2">
                 <IconBolt className="w-6 h-6" />
               </div>
-              <h4 className="text-4xl font-extrabold text-neutral-50">&lt; 5kb</h4>
-              <p className="text-neutral-400 font-medium text-sm tracking-wide uppercase">Average Component Size</p>
+              <h4 className="text-4xl font-extrabold text-neutral-50">
+                &lt; 5kb
+              </h4>
+              <p className="text-neutral-400 font-medium text-sm tracking-wide uppercase">
+                Average Component Size
+              </p>
             </div>
             <div className="py-6 md:py-0 flex flex-col items-center justify-center space-y-2">
               <div className="w-12 h-12 rounded-full bg-purple-500/10 text-purple-400 flex items-center justify-center mb-2">
                 <IconStar className="w-6 h-6" />
               </div>
               <h4 className="text-4xl font-extrabold text-neutral-50">50+</h4>
-              <p className="text-neutral-400 font-medium text-sm tracking-wide uppercase">Ready-to-use Components</p>
+              <p className="text-neutral-400 font-medium text-sm tracking-wide uppercase">
+                Ready-to-use Components
+              </p>
             </div>
           </div>
         </div>
@@ -382,7 +395,9 @@ export default function Home() {
                 Live Interactive Architecture
               </Typography>
               <Typography className="text-neutral-400 text-lg">
-                Venti UI fits seamlessly into your React application, utilizing the same token-based styling as your core components to ensure perfect harmony.
+                Venti UI fits seamlessly into your React application, utilizing
+                the same token-based styling as your core components to ensure
+                perfect harmony.
               </Typography>
 
               <Accordion
@@ -396,19 +411,24 @@ export default function Home() {
                   defaultOpen
                 >
                   Venti uses pure Tailwind configurations mapping directly into
-                  system CSS variables for painless configuration adjustments. Simply copy the `theme.css` into your global stylesheet.
+                  system CSS variables for painless configuration adjustments.
+                  Simply copy the `theme.css` into your global stylesheet.
                 </AccordionItem>
                 <AccordionItem
                   id="server-components"
                   title="Is Next.js App Router supported?"
                 >
-                  Yes, fully supported. Our components use the `"use client"` directive strictly where interactivity requires it, ensuring your root static hydration streams stay unblocked.
+                  Yes, fully supported. Our components use the `"use client"`
+                  directive strictly where interactivity requires it, ensuring
+                  your root static hydration streams stay unblocked.
                 </AccordionItem>
                 <AccordionItem
                   id="framer-motion"
                   title="Do I need Framer Motion?"
                 >
-                  Yes, Venti relies on Framer Motion for complex layout animations and exit transitions. It's listed as a peer dependency.
+                  Yes, Venti relies on Framer Motion for complex layout
+                  animations and exit transitions. It's listed as a peer
+                  dependency.
                 </AccordionItem>
               </Accordion>
             </div>
@@ -428,8 +448,7 @@ export default function Home() {
                 <IconDots className="w-4 h-4 text-neutral-600" />
               </div>
 
-              <div className="p-6 space-y-8 bg-[url('/noise.png')] bg-repeat opacity-[0.99]">
-                
+              <div className="p-6 space-y-8">
                 {/* Search / Command Example */}
                 <div className="space-y-3">
                   <span className="text-xs font-mono font-medium text-neutral-500 flex items-center gap-2">
@@ -443,7 +462,7 @@ export default function Home() {
                     debounceDelay={400}
                     shortcutKey="/"
                     placeholder="Search documentation, components, or tutorials..."
-                    variant="default"
+                    variant="modern"
                   />
                 </div>
 
@@ -474,7 +493,9 @@ export default function Home() {
                           side: "right",
                           avatar: (
                             <div className="w-full h-full bg-sky-900 flex items-center justify-center rounded-full border border-sky-700">
-                              <span className="text-xs font-bold text-sky-200">U</span>
+                              <span className="text-xs font-bold text-sky-200">
+                                U
+                              </span>
                             </div>
                           ),
                         },
@@ -563,7 +584,8 @@ export default function Home() {
               >
                 Stop reinventing the wheel. Venti UI provides complex,
                 interactive components like advanced selects, date pickers, and
-                layout splitters with a simple, intuitive API. Focus on your business logic, not building custom dropdowns.
+                layout splitters with a simple, intuitive API. Focus on your
+                business logic, not building custom dropdowns.
               </motion.p>
               <motion.ul variants={staggerContainer} className="space-y-3 pt-4">
                 {[
@@ -614,9 +636,13 @@ export default function Home() {
                     <span className="text-sky-300">AdvancedSelect</span>,{" "}
                     <span className="text-sky-300">TimePicker</span>
                     {" }"} <span className="text-pink-500">from</span>{" "}
-                    <span className="text-emerald-300">"<GlitchText text="venti-ui"/>"</span>;
-                    {"\n\n"}
-                    <span className="text-neutral-500">{"// No extra config, just import and use"}</span>
+                    <span className="text-emerald-300">
+                      "<GlitchText text="venti-ui" />"
+                    </span>
+                    ;{"\n\n"}
+                    <span className="text-neutral-500">
+                      {"// No extra config, just import and use"}
+                    </span>
                     {"\n"}
                     <span className="text-pink-500">
                       export default function
@@ -625,19 +651,23 @@ export default function Home() {
                     {"  "}
                     <span className="text-pink-500">return</span> ({"\n"}
                     {"    "}&lt;<span className="text-sky-300">Card</span>{" "}
-                    className=<span className="text-emerald-300">"p-6 shadow-xl"</span>
+                    className=
+                    <span className="text-emerald-300">"p-6 shadow-xl"</span>
                     &gt;{"\n"}
                     {"      "}&lt;
-                    <span className="text-sky-300">AdvancedSelect</span> 
+                    <span className="text-sky-300">AdvancedSelect</span>
                     {"\n        "}data=
-                    {"{"}users{"}"} 
-                    {"\n        "}searchable 
-                    {"\n        "}placeholder=<span className="text-emerald-300">"Select an assignee..."</span>
+                    {"{"}users{"}"}
+                    {"\n        "}searchable
+                    {"\n        "}placeholder=
+                    <span className="text-emerald-300">
+                      "Select an assignee..."
+                    </span>
                     {"\n      "}/&gt;{"\n"}
                     {"      "}&lt;
-                    <span className="text-sky-300">TimePicker</span> 
+                    <span className="text-sky-300">TimePicker</span>
                     {"\n        "}format=
-                    <span className="text-emerald-300">"24h"</span> 
+                    <span className="text-emerald-300">"24h"</span>
                     {"\n        "}step=
                     {"{"}15{"}"}
                     {"\n      "}/&gt;{"\n"}
@@ -653,21 +683,50 @@ export default function Home() {
         </div>
       </section>
       <section className="py-24 bg-neutral-950/30 border-b border-neutral-800/40 relative overflow-hidden">
-      <div className="container mx-auto px-4 max-w-4xl text-center">
-          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="mb-16">
-            <h2 className="text-3xl font-bold tracking-tight mb-4 text-neutral-50">Works with your stack.</h2>
-            <p className="text-neutral-400">Venti UI components are built to be framework agnostic where possible, prioritizing standard React architecture.</p>
+        <div className="container mx-auto px-4 max-w-4xl text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="mb-16"
+          >
+            <h2 className="text-3xl font-bold tracking-tight mb-4 text-neutral-50">
+              Works with your stack.
+            </h2>
+            <p className="text-neutral-400">
+              Venti UI components are built to be framework agnostic where
+              possible, prioritizing standard React architecture.
+            </p>
           </motion.div>
 
-          <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={staggerContainer} className="flex flex-wrap justify-center gap-4">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            variants={staggerContainer}
+            className="flex flex-wrap justify-center gap-4"
+          >
             {[
-              { icon: <IconBrandNextjs className="w-5 h-5" />, name: "Next.js" },
+              {
+                icon: <IconBrandNextjs className="w-5 h-5" />,
+                name: "Next.js",
+              },
               { icon: <IconBrandReact className="w-5 h-5" />, name: "React" },
               { icon: <IconBrandVite className="w-5 h-5" />, name: "Vite" },
-              { icon: <IconBrandTailwind className="w-5 h-5" />, name: "Tailwind CSS" },
-              { icon: <IconBrandFramerMotion className="w-5 h-5" />, name: "Framer Motion" },
+              {
+                icon: <IconBrandTailwind className="w-5 h-5" />,
+                name: "Tailwind CSS",
+              },
+              {
+                icon: <IconBrandFramerMotion className="w-5 h-5" />,
+                name: "Framer Motion",
+              },
             ].map((tech, i) => (
-              <motion.div key={i} variants={fadeUpVariants} whileHover={{ y: -2 }}>
+              <motion.div
+                key={i}
+                variants={fadeUpVariants}
+                whileHover={{ y: -2 }}
+              >
                 <div className="flex items-center gap-3 px-6 py-3 rounded-full bg-neutral-900/50 border border-neutral-800 text-neutral-300 font-medium">
                   {tech.icon}
                   {tech.name}
@@ -676,7 +735,7 @@ export default function Home() {
             ))}
           </motion.div>
         </div>
-</section>
+      </section>
 
       {/* TESTIMONIALS / SOCIAL PROOF SECTION */}
       <section className="py-24 bg-neutral-950/30 border-b border-neutral-800/40 relative overflow-hidden">
@@ -687,8 +746,12 @@ export default function Home() {
             viewport={{ once: true }}
             className="mb-16"
           >
-            <h2 className="text-3xl font-bold tracking-tight mb-4">Loved by Frontend Engineers</h2>
-            <p className="text-neutral-400">See what the community is saying about Venti UI.</p>
+            <h2 className="text-3xl font-bold tracking-tight mb-4">
+              Loved by Frontend Engineers
+            </h2>
+            <p className="text-neutral-400">
+              See what the community is saying about Venti UI.
+            </p>
           </motion.div>
 
           <div className="grid md:grid-cols-3 gap-6 text-left">
@@ -709,7 +772,7 @@ export default function Home() {
                 text: "Framer Motion animations out of the box makes the UI feel incredibly premium. Best open source library I've used this year.",
               },
             ].map((review, i) => (
-              <motion.div 
+              <motion.div
                 key={i}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -717,14 +780,20 @@ export default function Home() {
                 transition={{ delay: i * 0.1 }}
               >
                 <Card className="p-6 bg-neutral-900/20 border-neutral-800 h-full flex flex-col justify-between">
-                  <p className="text-neutral-300 text-sm leading-relaxed mb-6">"{review.text}"</p>
+                  <p className="text-neutral-300 text-sm leading-relaxed mb-6">
+                    "{review.text}"
+                  </p>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-neutral-800 flex items-center justify-center font-bold text-neutral-500">
                       {review.name.charAt(0)}
                     </div>
                     <div>
-                      <p className="text-sm font-semibold text-neutral-200">{review.name}</p>
-                      <p className="text-xs text-neutral-500">{review.handle}</p>
+                      <p className="text-sm font-semibold text-neutral-200">
+                        {review.name}
+                      </p>
+                      <p className="text-xs text-neutral-500">
+                        {review.handle}
+                      </p>
                     </div>
                     <IconBrandTwitter className="w-4 h-4 text-neutral-600 ml-auto" />
                   </div>
@@ -765,19 +834,27 @@ export default function Home() {
       <section className="py-32 bg-neutral-950 relative overflow-hidden flex items-center justify-center text-center">
         {/* Glow effect */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-sky-500/10 blur-[120px] rounded-full pointer-events-none" />
-        
+
         <div className="container relative z-10 px-4">
           <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
             Ready to upgrade your UI?
           </h2>
           <p className="text-xl text-neutral-400 max-w-2xl mx-auto mb-10">
-            Join thousands of developers building better, faster, and more beautiful applications with Venti UI. Open source and free forever.
+            Join thousands of developers building better, faster, and more
+            beautiful applications with Venti UI. Open source and free forever.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button size="lg" className="h-12 px-8 text-base shadow-lg shadow-sky-500/20">
+            <Button
+              size="lg"
+              className="h-12 px-8 text-base shadow-lg shadow-sky-500/20"
+            >
               Get Started Now
             </Button>
-            <Button size="lg" variant="outline" className="h-12 px-8 text-base bg-neutral-900/50">
+            <Button
+              size="lg"
+              variant="outline"
+              className="h-12 px-8 text-base bg-neutral-900/50"
+            >
               <IconBrandGithub className="w-5 h-5 mr-2" />
               View Repository
             </Button>
@@ -788,9 +865,11 @@ export default function Home() {
       {/* FOOTER */}
       <footer className="bg-[#060606] pb-8">
         <div className="container mx-auto max-w-7xl">
-
           <div className="pt-8 border-t border-neutral-800/60 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-neutral-500">
-            <p>© {new Date().getFullYear()} Venti UI Labs. Expressive architecture.</p>
+            <p>
+              © {new Date().getFullYear()} Venti UI Labs. Expressive
+              architecture.
+            </p>
             <p>Designed and built with ♥ in the open.</p>
           </div>
         </div>
