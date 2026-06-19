@@ -26,6 +26,7 @@ Built for teams who want modern UI components without sacrificing control over t
 * 🌙 Themeable via CSS variables
 * 🚀 Next.js App Router compatible
 * 🧩 Copy-paste component architecture
+* 📦 CLI scaffold (`create-venti-app`)
 
 ## Component Catalog
 
@@ -76,45 +77,63 @@ Built for teams who want modern UI components without sacrificing control over t
 
 ## Installation
 
-```bash
-bun add framer-motion
-```
+### Quick scaffold (recommended)
 
-or
+Scaffold a new Next.js project with all components pre-installed:
 
 ```bash
-npm install framer-motion
+bash <(curl -s https://raw.githubusercontent.com/duckeydev/VentiUI/main/install.sh) my-app
+cd my-app
+npm run dev
 ```
 
-### Peer Dependencies
+Or run interactively:
+
+```bash
+bash <(curl -s https://raw.githubusercontent.com/duckeydev/VentiUI/main/install.sh)
+```
+
+This sets up:
+- Next.js + TypeScript + Tailwind CSS v4
+- All 65+ components in `components/`
+- Utility library in `lib/` ( `cn()`, theme engine)
+- shadcn-style CSS variables (Coffee theme) with light/dark mode
+
+### Manual install (existing project)
+
+```bash
+# Required peer dependencies
+npm install framer-motion class-variance-authority clsx tailwind-merge @tabler/icons-react
+
+# Dev dependencies (Tailwind v4)
+npm install -D tailwindcss @tailwindcss/postcss
+```
+
+Then copy the files you need from `components/`, `lib/`, and `app/globals.css` into your project.
+
+Ensure your `tsconfig.json` has the `@/*` path alias:
 
 ```json
 {
-  "react": "^19.0.0",
-  "react-dom": "^19.0.0",
-  "framer-motion": "^12.0.0",
-  "tailwindcss": "^4.0.0"
+  "compilerOptions": {
+    "paths": { "@/*": ["./*"] }
+  }
 }
 ```
 
 ## Quick Start
 
 ```tsx
-import { AdvancedSelect, TimePicker } from "venti-ui";
+import { Button } from "@/components/button";
+import { Card, CardContent } from "@/components/card";
 
-export default function Dashboard() {
+export default function Home() {
   return (
-    <Card className="p-6 shadow-xl">
-      <AdvancedSelect
-        data={users}
-        searchable
-        placeholder="Select an assignee..."
-      />
-
-      <TimePicker
-        format="24h"
-        step={15}
-      />
+    <Card className="max-w-md p-8 shadow-xl">
+      <CardContent>
+        <h1 className="mb-2 text-2xl font-bold">Hello Venti</h1>
+        <Button>Get Started</Button>
+      </CardContent>
     </Card>
   );
 }
@@ -154,7 +173,7 @@ Venti UI works with:
 | ---------------------- | ----- |
 | Lighthouse Score       | 100%  |
 | Average Component Size | < 5KB |
-| Components Included    | 50+   |
+| Components Included    | 65+   |
 
 ## Next.js Support
 
@@ -198,7 +217,7 @@ Focus on your application's business logic instead of rebuilding infrastructure.
 * [ ] Design token generator
 * [ ] Additional theme packs
 * [ ] React Native compatibility exploration
-* [ ] Component CLI installer
+* [x] Component CLI installer
 * [ ] Visual theme editor
 
 ## Contributing

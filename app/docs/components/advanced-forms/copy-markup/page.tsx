@@ -1,18 +1,17 @@
 "use client";
 
-import { CopyMarkup } from "@/components/copy-markup"; 
+import { Typography } from "@/components/typography";
+import { CopyMarkup } from "@/components/copy-markup";
 import { DocsBreadcrumbs, DocsOutline, DocsPageFrame, DocsPanel } from "../../../layout";
 import DocsSidebar from "../../../Sidebar";
 import DocsAdjacentNav from "../../../DocsAdjacentNav";
 import { TableColumn, Table } from "@/components/table";
-import CodeBlock from "@/app/components/codeblock";
 import { Badge } from "@/components";
 
 const componentMeta = {
-  title: "CopyMarkup Engine Block",
-  description: "Shows code with line numbers and a copy button.",
-  version: "v1.0.2",
-  sourceUrl: "https://github.com/venti-ui/venti/blob/main/packages/copy-markup.tsx",
+  title: "CopyMarkup",
+  description: "Displays code snippets with syntax highlighting, line numbers, and a one-click copy button.",
+  version: "v1.1.0",
 };
 
 interface ApiProperty {
@@ -23,11 +22,13 @@ interface ApiProperty {
 }
 
 const apiProperties: ApiProperty[] = [
-                    { name: "code", type: "string", default: "required", description: "The raw multi-line code script parameters or text payload layout tracking to render." },
-                    { name: "language", type: "string", default: '"bash"', description: "Semantic identifier printed on the header layout toolbar representing target syntax tracks." },
-                    { name: "showLineNumbers", type: "boolean", default: "false", description: "Injects sequential numeric column labels alongside the code string margins." },
-                    { name: "variant", type: '"default" | "solid"', default: '"default"', description: "Adjusts structural density parameters, box canvas depth, and background border attributes." },
-                  ];
+  { name: "code", type: "string", default: "required", description: "The source code to display and copy." },
+  { name: "language", type: "string", default: '"bash"', description: "Language identifier used for syntax highlighting." },
+  { name: "showLineNumbers", type: "boolean", default: "false", description: "Shows line numbers in the left gutter." },
+  { name: "fileName", type: "string", default: "—", description: "Optional file name shown in the header bar." },
+  { name: "variant", type: '"modern" | "minimal" | "solid" | "glass" | "macos"', default: '"modern"', description: "Visual style variant for the code block wrapper." },
+  { name: "theme", type: "PrismTheme", default: "vsDark", description: "Prism theme object for syntax highlighting colors." },
+];
 
 const columns: TableColumn<ApiProperty>[] = [
   { key: "name", header: "Property", width: "20%", className: "font-mono font-bold text-primary p-4" },
@@ -37,26 +38,6 @@ const columns: TableColumn<ApiProperty>[] = [
 ];
 
 export default function CopyMarkupDocsPage() {
-  const sampleSnippet = `npm install @venti-ui/primitives framer-motion
-core-pack init --target=./components/ui
-venti compile copy-markup --optimize`;
-
-  const documentationSourceCode = `import { CopyMarkup } from "@/components/copy-markup";
-
-export function InstallationGuide() {
-  const codeBlock = \`npm install @venti-ui/primitives
-venti compile copy-markup\`;
-
-  return (
-    <CopyMarkup
-      code={codeBlock}
-      language="bash"
-      showLineNumbers={true}
-      variant="default"
-    />
-  );
-}`;
-
   return (
     <DocsPageFrame
       leftBar={
@@ -68,70 +49,104 @@ venti compile copy-markup\`;
         <DocsOutline
           title="On this page"
           items={[
-            { label: "Interactive Component Layout", href: "#interactive-demo" },
-            { label: "CopyMarkup Specification Matrix", href: "#props-api" },
+            { label: "Overview", href: "#overview" },
+            { label: "Examples", href: "#examples" },
+            { label: "API", href: "#api" },
           ]}
         />
       }
     >
       <main className="py-10 lg:col-span-7 space-y-12 lg:max-w-3xl">
-
-        <div className="space-y-3 border-b border-border pb-6">
+        <div className="space-y-3 border-b border-border pb-6" id="overview">
           <DocsBreadcrumbs
             items={[
               { label: "Docs", href: "/docs" },
-              { label: "Utility Primitives", href: "/docs/components#utilities" },
-              { label: "CopyMarkup Code Node", href: "/docs/components/utilities/copy-markup" },
+              { label: "Advanced Forms", href: "/docs/components/advanced-forms" },
+              { label: "CopyMarkup", href: "/docs/components/advanced-forms/copy-markup" },
             ]}
           />
 
           <div className="flex items-center gap-3">
-            <h1 className="text-3xl font-extrabold tracking-tight text-foreground lg:text-4xl">
-              {componentMeta.title}
-            </h1>
-            <Badge variant="info">
-              {componentMeta.version}
-              </Badge>
+            <Typography variant="h1">{componentMeta.title}</Typography>
+            <Badge variant="info">{componentMeta.version}</Badge>
           </div>
-
-          <p className="text-base leading-relaxed text-muted-foreground">{componentMeta.description}</p>
-
+          <Typography variant="lead">{componentMeta.description}</Typography>
         </div>
 
-        <section id="interactive-demo" className="space-y-3 scroll-mt-20">
-          <CodeBlock
-            example={{
-              id: "interactive-demo",
-              title: "Interactive Implementation",
-              description: "Click the copy button to copy the code.",
-              code: documentationSourceCode,
-              render: () => (
-                <div className="w-full max-w-md space-y-2.5">
-                  <label className="text-[11px] font-mono font-bold uppercase tracking-widest text-muted-foreground/60 block">
-                    Core Terminal Manifest
-                  </label>
+        <section id="examples" className="space-y-8 scroll-mt-20">
+          <Typography variant="h2">Examples</Typography>
+
+          <div className="space-y-3">
+            <Typography variant="h3">Basic usage</Typography>
+            <CopyMarkup
+              code={`import { CopyMarkup } from "@/components/copy-markup";
+
+export function InstallGuide() {
+  return (
+    <CopyMarkup
+      code="npm install framer-motion"
+      language="bash"
+    />
+  );
+}`}
+              language="tsx"
+              fileName="install.tsx"
+            />
+          </div>
+
+          <div className="space-y-3">
+            <Typography variant="h3">With line numbers</Typography>
+            <CopyMarkup
+              code={`function fibonacci(n: number): number {
+  if (n <= 1) return n;
+  return fibonacci(n - 1) + fibonacci(n - 2);
+}
+
+console.log(fibonacci(10)); // 55`}
+              language="typescript"
+              showLineNumbers
+              fileName="fib.ts"
+            />
+          </div>
+
+          <div className="space-y-3">
+            <Typography variant="h3">Shell commands</Typography>
+            <CopyMarkup
+              code={`# Install dependencies
+npm install framer-motion class-variance-authority clsx tailwind-merge
+
+# Dev dependencies
+npm install -D tailwindcss @tailwindcss/postcss
+
+# Start dev server
+npm run dev`}
+              language="bash"
+              showLineNumbers
+            />
+          </div>
+
+          <div className="space-y-3">
+            <Typography variant="h3">Variants</Typography>
+            <div className="space-y-3">
+              {(["modern", "minimal", "solid", "glass", "macos"] as const).map((v) => (
+                <div key={v} className="space-y-1">
+                  <Typography variant="small" className="capitalize">{v}</Typography>
                   <CopyMarkup
-                    code={sampleSnippet}
+                    code={`echo "Variant: ${v}"`}
                     language="bash"
-                    showLineNumbers={true}
+                    variant={v}
                   />
                 </div>
-              ),
-            }}
-          />
-        </section>
-
-        <section id="props-api" className="space-y-4 scroll-mt-20">
-          <div className="flex items-center gap-2 border-b border-border/40 pb-2">
-            <div className="space-y-0.5">
-              <h2 className="text-lg font-bold tracking-tight text-foreground">
-                Properties API
-              </h2>
-              <p className="text-xs text-muted-foreground">
-                All available props for this component.
-              </p>
+              ))}
             </div>
           </div>
+        </section>
+
+        <section id="api" className="space-y-4 scroll-mt-20">
+          <Typography variant="h2">API</Typography>
+          <Typography variant="body">
+            All available props for the CopyMarkup component.
+          </Typography>
 
           <DocsPanel className="overflow-hidden rounded-xl">
             <Table<ApiProperty>
@@ -145,8 +160,8 @@ venti compile copy-markup\`;
 
         <DocsAdjacentNav />
 
-        <footer className="border-t border-border/30 pt-4 text-center text-xs text-muted-foreground/40">
-          © 2026 Venti UI Labs. UI made right.
+        <footer className="border-t border-border/30 pt-8 pb-10 text-center text-[10px] uppercase tracking-[0.2em] font-bold text-muted-foreground/40">
+          © 2026 Venti UI Labs.
         </footer>
       </main>
     </DocsPageFrame>

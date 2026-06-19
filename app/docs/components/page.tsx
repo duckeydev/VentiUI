@@ -10,6 +10,7 @@ import {
   IconTable,
 } from "@tabler/icons-react";
 import Link from "next/link";
+import { Typography } from "@/components/typography";
 import { DocsBreadcrumbs, DocsOutline, DocsPageFrame } from "../layout";
 import DocsSidebar from "../Sidebar";
 import { cardVariants } from "@/components/card";
@@ -219,13 +220,11 @@ export default function ComponentsPage() {
               { label: "Components", href: "/docs/components" },
             ]}
           />
-          <h1 className="text-3xl font-extrabold tracking-tight text-foreground lg:text-4xl">
-            Component Directory
-          </h1>
-          <p className="text-base leading-relaxed text-muted-foreground">
+          <Typography variant="h1">Component Directory</Typography>
+          <Typography variant="lead">
             An ecosystem of modular, high-density primitives built atop Tailwind
             variables. Explore layouts, input forms, and overlay architectures.
-          </p>
+          </Typography>
         </div>
 
         <div className="space-y-12">
@@ -245,12 +244,10 @@ export default function ComponentsPage() {
                     <CategoryIcon stroke={2} className="h-4 w-4" />
                   </div>
                   <div className="space-y-0.5">
-                    <h2 className="text-base font-bold tracking-tight text-foreground">
-                      {category.title}
-                    </h2>
-                    <p className="max-w-xl text-xs leading-relaxed text-muted-foreground">
+                    <Typography variant="h4">{category.title}</Typography>
+                    <Typography variant="small" className="max-w-xl leading-relaxed">
                       {category.description}
-                    </p>
+                    </Typography>
                   </div>
                 </div>
 

@@ -30,6 +30,7 @@ const componentDirectory = [
       "Links",
       "Dividers",
       "KBD",
+      "CodeBlock",
       "Custom Scrollbar",
     ],
   },

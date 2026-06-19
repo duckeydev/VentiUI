@@ -737,73 +737,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TESTIMONIALS / SOCIAL PROOF SECTION */}
-      <section className="py-24 bg-neutral-950/30 border-b border-neutral-800/40 relative overflow-hidden">
-        <div className="container mx-auto px-4 max-w-6xl text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-16"
-          >
-            <h2 className="text-3xl font-bold tracking-tight mb-4">
-              Loved by Frontend Engineers
-            </h2>
-            <p className="text-neutral-400">
-              See what the community is saying about Venti UI.
-            </p>
-          </motion.div>
-
-          <div className="grid md:grid-cols-3 gap-6 text-left">
-            {[
-              {
-                name: "Alex Rivera",
-                handle: "@arivera_dev",
-                text: "I was spending hours building custom comboboxes and accessible modals. Venti UI gave me everything I needed in minutes. Absolute game changer.",
-              },
-              {
-                name: "Sarah Chen",
-                handle: "@schen_codes",
-                text: "The integration with standard Tailwind configurations is flawless. It doesn't fight my existing design system, it enhances it.",
-              },
-              {
-                name: "Marcus Johnson",
-                handle: "@marcusj_ui",
-                text: "Framer Motion animations out of the box makes the UI feel incredibly premium. Best open source library I've used this year.",
-              },
-            ].map((review, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-              >
-                <Card className="p-6 bg-neutral-900/20 border-neutral-800 h-full flex flex-col justify-between">
-                  <p className="text-neutral-300 text-sm leading-relaxed mb-6">
-                    "{review.text}"
-                  </p>
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-neutral-800 flex items-center justify-center font-bold text-neutral-500">
-                      {review.name.charAt(0)}
-                    </div>
-                    <div>
-                      <p className="text-sm font-semibold text-neutral-200">
-                        {review.name}
-                      </p>
-                      <p className="text-xs text-neutral-500">
-                        {review.handle}
-                      </p>
-                    </div>
-                    <IconBrandTwitter className="w-4 h-4 text-neutral-600 ml-auto" />
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* COMPONENT LIST SECTION */}
       <section className="py-24 bg-[#0a0a0a] overflow-hidden border-b border-neutral-800/40">
         <div className="container mx-auto px-4">
@@ -832,17 +765,10 @@ export default function Home() {
 
       {/* BOTTOM CTA SECTION */}
       <section className="py-32 bg-neutral-950 relative overflow-hidden flex items-center justify-center text-center">
-        {/* Glow effect */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-sky-500/10 blur-[120px] rounded-full pointer-events-none" />
-
         <div className="container relative z-10 px-4">
           <h2 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-6">
             Ready to upgrade your UI?
           </h2>
-          <p className="text-xl text-neutral-400 max-w-2xl mx-auto mb-10">
-            Join thousands of developers building better, faster, and more
-            beautiful applications with Venti UI. Open source and free forever.
-          </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Button
               size="lg"

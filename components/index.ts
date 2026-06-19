@@ -8,6 +8,7 @@ export { Image, imageVariants } from "./images";
 export { Link, linkVariants } from "./link";
 export { Divider, dividerVariants } from "./divider";
 export { Kbd, kbdVariants } from "./kbd";
+export { CodeBlock, codeBlockVariants } from "./codeblock";
 export { ScrollArea } from "./scroll-area";
 
 // Base Components
